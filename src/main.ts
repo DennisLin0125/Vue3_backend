@@ -1,10 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
-const fun = () => {
-  console.log('215445645')
-}
+const app = createApp(App)
+app.use(ElementPlus)
 
-fun()
+app.mount('#app')

@@ -1,13 +1,20 @@
 <template>
-  <div>
-  我是app組件
+  <div class="box">
+    <h1>我是app組件</h1>
   </div>
 </template>
 
 <script setup lang="ts">
-
+const str = '13215646564'
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.box {
+  width: 600px;
+  height: 400px;
+  background: black;
+  h1 {
+    color: white;
+  }
+}
 </style>

@@ -4,9 +4,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const str = '13215646564'
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 .box {

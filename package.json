@@ -24,7 +24,8 @@
     "mockjs": "1.1.0",
     "nprogress": "^0.2.0",
     "vite-plugin-mock": "2.9.6",
-    "vue": "^3.3.8"
+    "vue": "^3.3.8",
+    "vue-router": "4.1.6"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",

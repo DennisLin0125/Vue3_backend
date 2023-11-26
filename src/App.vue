@@ -1,9 +1,10 @@
 <template>
-  <el-button type="primary" size="default" :icon="Plus">主要按鈕</el-button>
+  <h1>SVG測試</h1>
+  <svg-icon name="home" color="pink" width="100px" height="100px"></svg-icon>
 </template>
 
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 </script>
 
 <style scoped lang="scss"></style>

@@ -11,4 +11,6 @@ app.use(ElementPlus)
 import globalComponent from '@/components'
 app.use(globalComponent)
 
+import '@/styles/index.scss'
+
 app.mount('#app')

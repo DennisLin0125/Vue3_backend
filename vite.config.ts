@@ -19,4 +19,12 @@ export default defineConfig({
       '@': path.resolve('src'), // 使用 @ 代替 src
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        javascriptEnabled: true,
+        additionalData: '@import "./src/styles/variable.scss";',
+      },
+    },
+  },
 })

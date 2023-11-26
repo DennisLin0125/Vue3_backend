@@ -1,8 +1,15 @@
 <template>
-  <h1>SVG測試</h1>
-  <svg-icon name="phone" color="pink" width="100px" height="100px"></svg-icon>
+  <div>
+    <h1>測試</h1>
+  </div>
 </template>
 
 <script setup lang="ts"></script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+div{
+  h1{
+    color: $base-menu-background;
+  }
+}
+</style>

@@ -21,7 +21,13 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button class="login_btn" type="primary" size="default">
+            <el-button
+              class="login_btn"
+              type="primary"
+              size="default"
+              @click="login"
+              :loading="loading"
+            >
               登入
             </el-button>
           </el-form-item>
@@ -33,9 +39,38 @@
 
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+// 引入小倉庫
+import useUserStore from '@/store/modules/user.ts'
+import { useRouter } from 'vue-router'
+import { ElNotification } from 'element-plus'
+// 獲取路由器
+let $router = useRouter()
+let userStore = useUserStore()
 // 收集表單數據
 let loginForm = reactive({ username: 'admin', password: '111111' })
+// 定義變量loading效果
+let loading = ref(false)
+// 登入按鈕回調
+const login = async () => {
+  // 加載效果
+  loading.value = true
+  try {
+    await userStore.userLogin(loginForm)
+    await $router.push('/')
+    ElNotification({
+      type: 'success',
+      message: '登入成功',
+    })
+    loading.value = false
+  } catch (err) {
+    loading.value = false
+    ElNotification({
+      type: 'error',
+      message: err as Error,
+    })
+  }
+}
 </script>
 
 <style scoped lang="scss">

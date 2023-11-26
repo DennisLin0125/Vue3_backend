@@ -13,16 +13,4 @@ app.use(globalComponent)
 
 import '@/styles/index.scss'
 
-// 測試
-import axios from 'axios'
-// 登入API
-axios({
-  url: '/api/user/login',
-  method: 'post',
-  data: {
-    username: 'admin',
-    password: '111111',
-  },
-})
-
 app.mount('#app')

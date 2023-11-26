@@ -23,6 +23,9 @@ dependencies:
   mockjs:
     specifier: 1.1.0
     version: 1.1.0
+  nprogress:
+    specifier: ^0.2.0
+    version: 0.2.0
   vite-plugin-mock:
     specifier: 2.9.6
     version: 2.9.6(mockjs@1.1.0)(rollup@2.79.1)(vite@5.0.2)
@@ -3841,6 +3844,10 @@ packages:
     dependencies:
       path-key: 4.0.0
     dev: true
+
+  /nprogress@0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
+    dev: false
 
   /nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}

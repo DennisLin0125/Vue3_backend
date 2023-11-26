@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { constantRouter } from '@/router/routes.ts'
 
-let router = createRouter({
+const router = createRouter({
   history: createWebHashHistory(),
   routes: constantRouter,
   //     滾動行為

@@ -44,6 +44,8 @@ import { reactive, ref } from 'vue'
 import useUserStore from '@/store/modules/user.ts'
 import { useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
+// 引入獲取當前時間的函數
+import { getTime } from '@/utils/time.ts'
 // 獲取路由器
 let $router = useRouter()
 let userStore = useUserStore()
@@ -60,14 +62,15 @@ const login = async () => {
     await $router.push('/')
     ElNotification({
       type: 'success',
-      message: '登入成功',
+      message: '歡迎回來^^',
+      title: `Hi,${getTime()}好`,
     })
     loading.value = false
   } catch (err) {
     loading.value = false
     ElNotification({
       type: 'error',
-      message: err as Error,
+      message: err.message as Error,
     })
   }
 }

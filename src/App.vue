@@ -7,8 +7,8 @@
 <script setup lang="ts"></script>
 
 <style scoped lang="scss">
-div{
-  h1{
+div {
+  h1 {
     color: $base-menu-background;
   }
 }

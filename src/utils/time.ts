@@ -1,7 +1,7 @@
 // 獲取當前時間
 export const getTime = () => {
-  let message = ''
-  let hour = new Date().getHours()
+  let message: string
+  const hour = new Date().getHours()
   if (hour <= 9) {
     message = '早上'
   } else if (hour <= 12) {

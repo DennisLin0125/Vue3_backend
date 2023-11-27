@@ -35,7 +35,7 @@ request.interceptors.response.use(
   (error) => {
     //失敗回呼:處理http網路錯誤的
     //定義一個變數:儲存網路錯誤訊息
-    let message = ''
+    let message: string
     //http狀態碼
     const status = error.response.status
     switch (status) {

@@ -3,16 +3,21 @@
     <el-row :gutter="10">
       <el-col :span="12" :xs="0"></el-col>
       <el-col :span="12" :xs="24">
-        <el-form class="login_form">
+        <el-form
+          class="login_form"
+          :model="loginForm"
+          :rules="rules"
+          ref="loginForms"
+        >
           <h1>Hello</h1>
           <h2>歡迎來到後台管理系統</h2>
-          <el-form-item>
+          <el-form-item prop="username">
             <el-input
               :prefix-icon="User"
               v-model="loginForm.username"
             ></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="password">
             <el-input
               show-password
               :prefix-icon="Lock"
@@ -53,8 +58,11 @@ let userStore = useUserStore()
 let loginForm = reactive({ username: 'admin', password: '111111' })
 // 定義變量loading效果
 let loading = ref(false)
+// 獲取表單元素
+let loginForms = ref()
 // 登入按鈕回調
 const login = async () => {
+  await loginForms.value.validate()
   // 加載效果
   loading.value = true
   try {
@@ -66,13 +74,43 @@ const login = async () => {
       title: `Hi,${getTime()}好`,
     })
     loading.value = false
-  } catch (err) {
+  } catch (err: any) {
     loading.value = false
     ElNotification({
       type: 'error',
       message: err.message as Error,
     })
   }
+}
+// 自訂義校驗規則方法
+const validatorUserName = (rule: any, value: any, callback: any) => {
+  if (value.length >= 5) {
+    callback()
+  } else {
+    callback(new Error('帳號長度為5-10位'))
+  }
+}
+const validatorPassword = (rule: any, value: any, callback: any) => {
+  if (/^\d{6,10}$/.test(value)) {
+    callback()
+  } else {
+    callback(new Error('密碼長度為6-10位'))
+  }
+}
+// 表單較驗物件
+const rules = {
+  username: [
+    {
+      validator: validatorUserName,
+      trigger: 'change',
+    },
+  ],
+  password: [
+    {
+      validator: validatorPassword,
+      trigger: 'change',
+    },
+  ],
 }
 </script>
 

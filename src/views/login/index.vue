@@ -120,22 +120,26 @@ const rules = {
   height: 100vh;
   background: url('@/assets/images/background.jpg') no-repeat;
   background-size: cover;
+
   .login_form {
     position: relative;
-    width: 80%;
     top: 30vh;
+    width: 80%;
+    padding: 20px;
     background: url('@/assets/images/login_form.png') no-repeat;
     background-size: cover;
-    padding: 20px;
+
     h1 {
-      color: white;
       font-size: 40px;
-    }
-    h2 {
       color: white;
-      font-size: 20px;
-      margin: 20px 0;
     }
+
+    h2 {
+      margin: 20px 0;
+      font-size: 20px;
+      color: white;
+    }
+
     .login_btn {
       width: 100%;
     }

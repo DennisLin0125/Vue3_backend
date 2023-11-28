@@ -1,7 +1,7 @@
-//引入清除默認樣式
-@import './reset.scss';
+// 引入清除默認樣式
+@import './reset';
 
-//滾動條外觀
+// 滾動條外觀
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -10,7 +10,7 @@
   background: $base-menu-background;
 }
 
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
   width: 10px;
   background-color: yellowgreen;
   border-radius: 10px;

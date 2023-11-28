@@ -3,6 +3,23 @@
     <!--    左側菜單-->
     <div class="layout-slider">
       <logo></logo>
+      <!--      滾動組件-->
+      <el-scrollbar class="scrollbar">
+        <!--       菜單組件 -->
+        <el-menu background-color="#001529" text-color="white">
+          <el-menu-item index="1">首頁</el-menu-item>
+          <el-menu-item index="2">大數據</el-menu-item>
+          <!--          摺疊式菜單-->
+          <el-sub-menu index="3">
+            <template #title>
+              <span>權限管理</span>
+            </template>
+            <el-menu-item index="3-1">用戶管理</el-menu-item>
+            <el-menu-item index="3-2">角色管理</el-menu-item>
+            <el-menu-item index="3-3">菜單管理</el-menu-item>
+          </el-sub-menu>
+        </el-menu>
+      </el-scrollbar>
     </div>
     <!--    頂部導航-->
     <div class="layout-tabular">456</div>
@@ -25,7 +42,13 @@ import Logo from '@/layout/logo/index.vue'
   .layout-slider {
     width: $base-menu-width;
     height: 100vh;
+    color: white;
     background-color: $base-menu-background;
+
+    .scrollbar {
+      width: 100%;
+      height: calc(100vh - $base-menu-logo-height);
+    }
   }
 
   .layout-tabular {

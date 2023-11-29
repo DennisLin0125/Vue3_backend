@@ -5,11 +5,14 @@ import type { loginForm, loginResponseData } from '@/api/user/type.ts'
 import type { userState } from '@/store/modules/types/type.ts'
 // 引入本地存儲
 import { SET_TOKEN, GET_TOKEN } from '@/utils/token.ts'
+// 引入路由常量
+import { constantRouter } from '@/router/routes.ts'
 // 創建小倉庫
 const useUserStore = defineStore('User', {
   state: (): userState => {
     return {
       token: GET_TOKEN(),
+      menuRoutes: constantRouter,
     }
   },
   actions: {

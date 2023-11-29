@@ -7,17 +7,7 @@
       <el-scrollbar class="scrollbar">
         <!--       菜單組件 -->
         <el-menu background-color="#001529" text-color="white">
-          <el-menu-item index="1">首頁</el-menu-item>
-          <el-menu-item index="2">大數據</el-menu-item>
-          <!--          摺疊式菜單-->
-          <el-sub-menu index="3">
-            <template #title>
-              <span>權限管理</span>
-            </template>
-            <el-menu-item index="3-1">用戶管理</el-menu-item>
-            <el-menu-item index="3-2">角色管理</el-menu-item>
-            <el-menu-item index="3-3">菜單管理</el-menu-item>
-          </el-sub-menu>
+          <Menu :menuList="userStore.menuRoutes"></Menu>
         </el-menu>
       </el-scrollbar>
     </div>
@@ -32,6 +22,10 @@
 
 <script setup lang="ts">
 import Logo from '@/layout/logo/index.vue'
+import Menu from '@/layout/menu/index.vue'
+
+import useUserStore from '@/store/modules/user.ts'
+let userStore = useUserStore()
 </script>
 
 <style scoped lang="scss">
@@ -48,6 +42,10 @@ import Logo from '@/layout/logo/index.vue'
     .scrollbar {
       width: 100%;
       height: calc(100vh - $base-menu-logo-height);
+
+      .el-menu {
+        border-right: none;
+      }
     }
   }
 

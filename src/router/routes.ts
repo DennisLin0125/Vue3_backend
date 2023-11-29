@@ -6,6 +6,7 @@ export const constantRouter = [
     meta: {
       title: '登入',
       hidden: true,
+      icon: 'Promotion',
     },
   },
   {
@@ -15,6 +16,7 @@ export const constantRouter = [
     meta: {
       title: 'layout',
       hidden: false,
+      icon: 'Avatar',
     },
     children: [
       {
@@ -22,15 +24,8 @@ export const constantRouter = [
         component: () => import('@/views/home/index.vue'),
         meta: {
           title: '首頁',
-          hidden: true,
-        },
-      },
-      {
-        path: '/test',
-        component: () => import('@/views/home/index.vue'),
-        meta: {
-          title: '測試',
           hidden: false,
+          icon: 'HomeFilled',
         },
       },
     ],
@@ -42,6 +37,7 @@ export const constantRouter = [
     meta: {
       title: '404',
       hidden: true,
+      icon: 'CircleClose',
     },
   },
   {
@@ -51,6 +47,7 @@ export const constantRouter = [
     meta: {
       title: '任意路由',
       hidden: true,
+      icon: 'Refresh',
     },
   },
 ]

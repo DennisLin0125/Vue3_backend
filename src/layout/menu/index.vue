@@ -20,6 +20,7 @@
       <el-menu-item
         v-if="!item.children[0].meta.hidden"
         :index="item.children[0].path"
+        @click="goRoute"
       >
         <template #title>
           <el-icon>
@@ -47,11 +48,15 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
 //接收父組件傳來的路由數組
 defineProps(['menuList'])
+let $router = useRouter()
 // 點擊菜單的回調函數
 const goRoute = (vc: any) => {
-  console.log(vc.index)
+  // 路由跳轉
+  $router.push(vc.index)
 }
 </script>
 

@@ -15,7 +15,7 @@
     <div class="layout-tabular">456</div>
     <!--    內容展示區-->
     <div class="layout-main">
-      <p style="height: 10000px; color: red">我是一個p</p>
+      <Main></Main>
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@
 <script setup lang="ts">
 import Logo from '@/layout/logo/index.vue'
 import Menu from '@/layout/menu/index.vue'
+import Main from '@/layout/main/index.vue'
 
 import useUserStore from '@/store/modules/user.ts'
 let userStore = useUserStore()

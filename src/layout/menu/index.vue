@@ -47,6 +47,12 @@
   </template>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'Menu',
+}
+</script>
+
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
@@ -57,12 +63,6 @@ let $router = useRouter()
 const goRoute = (vc: any) => {
   // 路由跳轉
   $router.push(vc.index)
-}
-</script>
-
-<script lang="ts">
-export default {
-  name: 'Menu',
 }
 </script>
 

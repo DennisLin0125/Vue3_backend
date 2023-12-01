@@ -5,6 +5,12 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'Logo',
+}
+</script>
+
 <script setup lang="ts">
 //引入設置標題的文件
 import setting from '@/setting.ts'
@@ -16,7 +22,7 @@ import setting from '@/setting.ts'
   align-items: center;
   width: 100%;
   height: $base-menu-logo-height;
-  padding: 20px;
+  padding: 10px;
   color: white;
 
   img {

@@ -42,6 +42,12 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'Login',
+}
+</script>
+
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'

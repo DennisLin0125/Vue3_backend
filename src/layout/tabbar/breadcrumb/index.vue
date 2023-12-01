@@ -1,7 +1,7 @@
 <template>
   <!--      頂部左側靜態-->
-  <el-icon style="margin-right: 10px">
-    <Expand />
+  <el-icon style="margin-right: 10px" @click="changeIcon">
+    <component :is="layoutSettingStore.fold ? 'Expand' : 'Fold'"></component>
   </el-icon>
   <!--      左側麵包屑-->
   <el-breadcrumb separator-icon="ArrowRight">
@@ -10,6 +10,18 @@
   </el-breadcrumb>
 </template>
 
-<script setup lang="ts"></script>
+<script lang="ts">
+export default {
+  name: 'Breadcrumb',
+}
+</script>
+
+<script setup lang="ts">
+import useLayoutSettingStore from '@/store/modules/setting.ts'
+let layoutSettingStore = useLayoutSettingStore()
+const changeIcon = () => {
+  layoutSettingStore.fold = !layoutSettingStore.fold
+}
+</script>
 
 <style scoped lang="scss"></style>

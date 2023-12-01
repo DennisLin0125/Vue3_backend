@@ -6,13 +6,19 @@
       <!--      滾動組件-->
       <el-scrollbar class="scrollbar">
         <!--       菜單組件 -->
-        <el-menu background-color="#001529" text-color="white">
+        <el-menu
+          :default-active="$route.path"
+          background-color="#001529"
+          text-color="white"
+        >
           <Menu :menuList="userStore.menuRoutes"></Menu>
         </el-menu>
       </el-scrollbar>
     </div>
     <!--    頂部導航-->
-    <div class="layout-tabular">456</div>
+    <div class="layout-tabular">
+      <Tabbar></Tabbar>
+    </div>
     <!--    內容展示區-->
     <div class="layout-main">
       <Main></Main>
@@ -24,9 +30,14 @@
 import Logo from '@/layout/logo/index.vue'
 import Menu from '@/layout/menu/index.vue'
 import Main from '@/layout/main/index.vue'
+import Tabbar from '@/layout/tabbar/index.vue'
 
 import useUserStore from '@/store/modules/user.ts'
 let userStore = useUserStore()
+
+// 獲取路由對象
+import { useRoute } from 'vue-router'
+let $route = useRoute()
 </script>
 
 <style scoped lang="scss">

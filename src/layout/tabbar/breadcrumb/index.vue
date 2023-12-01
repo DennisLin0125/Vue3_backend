@@ -5,8 +5,19 @@
   </el-icon>
   <!--      左側麵包屑-->
   <el-breadcrumb separator-icon="ArrowRight">
-    <el-breadcrumb-item>權限管理</el-breadcrumb-item>
-    <el-breadcrumb-item>用戶管理</el-breadcrumb-item>
+    <el-breadcrumb-item
+      v-for="(item, index) in $route.matched"
+      :key="index"
+      v-show="item.meta.title"
+      :to="item.path"
+    >
+      <!--      對應圖標-->
+      <el-icon>
+        <component :is="item.meta.icon"></component>
+      </el-icon>
+      <!--      展示title-->
+      <span style="margin: 0 2px">{{ item.meta.title }}</span>
+    </el-breadcrumb-item>
   </el-breadcrumb>
 </template>
 
@@ -17,6 +28,9 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
+let $route = useRoute()
+
 import useLayoutSettingStore from '@/store/modules/setting.ts'
 let layoutSettingStore = useLayoutSettingStore()
 const changeIcon = () => {

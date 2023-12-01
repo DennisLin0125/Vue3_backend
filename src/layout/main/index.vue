@@ -1,7 +1,7 @@
 <template>
   <router-view v-slot="{ Component }">
     <transition name="fade-transform" mode="out-in">
-      <component :is="Component"></component>
+      <component :is="Component" v-if="flag"></component>
     </transition>
   </router-view>
 </template>
@@ -12,7 +12,22 @@ export default {
 }
 </script>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import {watch,ref,nextTick} from "vue";
+import useLayoutSettingStore from "@/store/modules/setting.ts";
+let layoutSettingStore = useLayoutSettingStore()
+
+// 控制當前組件是否銷毀
+let flag = ref(true)
+// 監聽數據
+watch(()=>layoutSettingStore.reflash,()=>{
+  // 點擊刷新按鈕,路由組件銷毀
+  flag.value=false
+  nextTick(()=>{
+    flag.value=true
+  })
+})
+</script>
 
 <style scoped lang="scss">
 .fade-transform-leave-active,

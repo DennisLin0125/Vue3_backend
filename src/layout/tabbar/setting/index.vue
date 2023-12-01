@@ -1,7 +1,7 @@
 <template>
-  <el-button size="small" icon="Refresh" circle="true"></el-button>
-  <el-button size="small" icon="FullScreen" circle="true"></el-button>
-  <el-button size="small" icon="Setting" circle="true"></el-button>
+  <el-button size="small" icon="Refresh" circle @click="updateReflash"></el-button>
+  <el-button size="small" icon="FullScreen" circle></el-button>
+  <el-button size="small" icon="Setting" circle></el-button>
   <img
     src="../../../../public/logo.png"
     alt="logo"
@@ -28,6 +28,12 @@ export default {
 }
 </script>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useLayoutSettingStore from "@/store/modules/setting.ts";
+let layoutSettingStore = useLayoutSettingStore()
+const updateReflash = ()=>{
+  layoutSettingStore.reflash = !layoutSettingStore.reflash
+}
+</script>
 
 <style scoped lang="scss"></style>

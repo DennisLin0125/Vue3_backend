@@ -13,13 +13,13 @@
   ></el-button>
   <el-button size="small" icon="Setting" circle></el-button>
   <img
-    src="../../../../public/logo.png"
+    :src="userStore.avatar"
     alt="logo"
-    style="width: 24px; height: 24px; margin: 0 10px"
+    style="width: 24px; height: 24px; margin: 0 10px; border-radius: 50%"
   />
   <el-dropdown>
     <span class="el-dropdown-link">
-      Admin
+      {{ userStore.username }}
       <el-icon class="el-icon--right">
         <arrow-down />
       </el-icon>
@@ -41,6 +41,9 @@ export default {
 <script setup lang="ts">
 import useLayoutSettingStore from '@/store/modules/setting.ts'
 let layoutSettingStore = useLayoutSettingStore()
+
+import useUserStore from '@/store/modules/user.ts'
+let userStore = useUserStore()
 const updateReflash = () => {
   layoutSettingStore.reflash = !layoutSettingStore.reflash
 }

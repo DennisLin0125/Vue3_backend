@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import nProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 //引入使用者相關的倉庫
-// import useUserStore from '@/store/modules/user'
+import useUserStore from '@/store/modules/user'
 //第一步:利用axios物件的create方法,去建立axios實例(其他的設定:基礎路徑、逾時的時間)
 const request = axios.create({
   //基礎路徑
@@ -15,10 +15,10 @@ const request = axios.create({
 request.interceptors.request.use((config) => {
   nProgress.start()
   //取得使用者相關的小倉庫:取得倉庫內部token,登入成功以後攜帶給伺服器
-  // const userStore = useUserStore()
-  // if (userStore.token) {
-  //     config.headers.token = userStore.token
-  // }
+  const userStore = useUserStore()
+  if (userStore.token) {
+    config.headers.token = userStore.token
+  }
   //config配置物件,headers屬性請求頭,經常給伺服器端攜帶公共參數
   //回傳配置對象
   return config

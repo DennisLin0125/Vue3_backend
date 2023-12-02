@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reqLogin } from '@/api/user'
+import { reqLogin, reqUserInfo } from '@/api/user'
 // 引入數據類型
 import type { loginForm, loginResponseData } from '@/api/user/type.ts'
 import type { userState } from '@/store/modules/types/type.ts'
@@ -13,6 +13,8 @@ const useUserStore = defineStore('User', {
     return {
       token: GET_TOKEN(),
       menuRoutes: constantRouter,
+      username: '',
+      avatar: '',
     }
   },
   actions: {
@@ -22,6 +24,17 @@ const useUserStore = defineStore('User', {
       if (result.code === 200) {
         this.token = result.data.token as string
         SET_TOKEN(result.data.token as string)
+        return 'ok'
+      } else {
+        return Promise.reject(new Error(result.data.message))
+      }
+    },
+    //   獲取用戶訊息
+    async userInfo() {
+      const result = await reqUserInfo()
+      if (result.code === 200) {
+        this.username = result.data.checkUser.username
+        this.avatar = result.data.checkUser.avatar
         return 'ok'
       } else {
         return Promise.reject(new Error(result.data.message))

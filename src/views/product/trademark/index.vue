@@ -26,8 +26,9 @@
       layout="prev, pager, next, jumper, ->, sizes, total"
       :total="total"
       @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      @current-change="getHasTrademark"
       background
+      page-count="7"
     />
   </el-card>
 </template>
@@ -50,7 +51,8 @@ let page = ref<number>(1)
 let limit = ref<number>(3)
 let total = ref<number>(0)
 let record = ref<Records>([])
-const getHasTrademark = async () => {
+const getHasTrademark = async (pager = 1) => {
+  page.value = pager
   let result: TradeMarkResponseData = await reqHasTrademark(
     page.value,
     limit.value,
@@ -64,7 +66,9 @@ onMounted(() => {
   getHasTrademark()
 })
 
-const handleCurrentChange = () => {}
+const handleSizeChange = () => {
+  getHasTrademark()
+}
 </script>
 
 <style scoped lang="scss"></style>

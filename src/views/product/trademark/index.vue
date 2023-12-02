@@ -41,12 +41,15 @@ export default {
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { reqHasTrademark } from '@/api/product/trademark'
-import type { TradeMarkResponseData } from '@/api/product/trademark/type.ts'
+import type {
+  TradeMarkResponseData,
+  Records,
+} from '@/api/product/trademark/type.ts'
 
 let page = ref<number>(1)
 let limit = ref<number>(3)
 let total = ref<number>(0)
-let record = ref<any>([])
+let record = ref<Records>([])
 const getHasTrademark = async () => {
   let result: TradeMarkResponseData = await reqHasTrademark(
     page.value,

@@ -3,15 +3,19 @@
     <!--    頂部添加按鈕-->
     <el-button type="primary" icon="Plus">添加品牌</el-button>
     <!--  table組件,用於展示數據-->
-    <el-table border style="width: 100%; margin: 10px 0">
+    <el-table :data="record" border style="width: 100%; margin: 10px 0">
       <el-table-column type="index" label="序號" width="80" align="center" />
-      <el-table-column prop="date" label="品牌名稱" width="width" />
+      <el-table-column prop="tmName" label="品牌名稱" width="width" />
       <el-table-column prop="name" label="品牌LOGO" width="width">
-        123
+        <template v-slot="{ row, $inde }">
+          <img :src="row.logoUrl" style="width: 80px; height: 80px" />
+        </template>
       </el-table-column>
       <el-table-column prop="address" label="品牌操作" width="width">
-        <el-button type="warning" icon="Edit"></el-button>
-        <el-button type="danger" icon="Delete"></el-button>
+        <template v-slot="{ row, $inde }">
+          <el-button type="warning" icon="Edit" size="small"></el-button>
+          <el-button type="danger" icon="Delete" size="small"></el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!--    分頁器-->
@@ -23,6 +27,7 @@
       :total="total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
+      background
     />
   </el-card>
 </template>
@@ -34,11 +39,29 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { reqHasTrademark } from '@/api/product/trademark'
+import type { TradeMarkResponseData } from '@/api/product/trademark/type.ts'
 
 let page = ref<number>(1)
 let limit = ref<number>(3)
-let total = ref<number>(20)
+let total = ref<number>(0)
+let record = ref<any>([])
+const getHasTrademark = async () => {
+  let result: TradeMarkResponseData = await reqHasTrademark(
+    page.value,
+    limit.value,
+  )
+  if (result.code === 200) {
+    total.value = result.data.total
+    record.value = result.data.records
+  }
+}
+onMounted(() => {
+  getHasTrademark()
+})
+
+const handleCurrentChange = () => {}
 </script>
 
 <style scoped lang="scss"></style>

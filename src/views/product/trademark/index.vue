@@ -83,7 +83,10 @@ export default {
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { reqHasTrademark } from '@/api/product/trademark'
+import {
+  reqHasTrademark,
+  reqAddOrUpdateTrademark,
+} from '@/api/product/trademark'
 import type {
   TradeMarkResponseData,
   Records,
@@ -125,6 +128,8 @@ const handleSizeChange = () => {
 
 const addTrademark = () => {
   dialogFormVisible.value = true
+  trademarkParams.logoUrl = ''
+  trademarkParams.tmName = ''
 }
 
 const updateTrademark = () => {
@@ -135,8 +140,22 @@ const cancel = () => {
   dialogFormVisible.value = false
 }
 
-const confirm = () => {
-  dialogFormVisible.value = false
+const confirm = async () => {
+  let result = await reqAddOrUpdateTrademark(trademarkParams)
+  if (result.code === 200) {
+    dialogFormVisible.value = false
+    ElMessage({
+      type: 'success',
+      message: '添加品牌成功',
+    })
+    await getHasTrademark()
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '添加品牌失敗',
+    })
+    dialogFormVisible.value = false
+  }
 }
 
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response: any) => {

@@ -1,6 +1,16 @@
 <template>
-  <el-button size="small" icon="Refresh" circle @click="updateReflash"></el-button>
-  <el-button size="small" icon="FullScreen" circle></el-button>
+  <el-button
+    size="small"
+    icon="Refresh"
+    circle
+    @click="updateReflash"
+  ></el-button>
+  <el-button
+    size="small"
+    icon="FullScreen"
+    circle
+    @click="fullScreen"
+  ></el-button>
   <el-button size="small" icon="Setting" circle></el-button>
   <img
     src="../../../../public/logo.png"
@@ -29,10 +39,18 @@ export default {
 </script>
 
 <script setup lang="ts">
-import useLayoutSettingStore from "@/store/modules/setting.ts";
+import useLayoutSettingStore from '@/store/modules/setting.ts'
 let layoutSettingStore = useLayoutSettingStore()
-const updateReflash = ()=>{
+const updateReflash = () => {
   layoutSettingStore.reflash = !layoutSettingStore.reflash
+}
+const fullScreen = () => {
+  let full = document.fullscreenElement
+  if (!full) {
+    document.documentElement.requestFullscreen()
+  } else {
+    document.exitFullscreen()
+  }
 }
 </script>
 

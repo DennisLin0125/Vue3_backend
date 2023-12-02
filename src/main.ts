@@ -7,6 +7,7 @@ import '@/styles/index.scss'
 import globalComponent from '@/components'
 import router from '@/router'
 import pinia from '@/store'
+import '@/permission.ts'
 
 const app = createApp(App)
 app.use(ElementPlus)

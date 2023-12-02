@@ -1,7 +1,7 @@
 <template>
   <div class="layout-container">
     <!--    左側菜單-->
-    <div class="layout-slider" :class="{ fold: !!layoutSettingStore.fold }">
+    <div class="layout-slider">
       <logo></logo>
       <!--      滾動組件-->
       <el-scrollbar class="scrollbar">
@@ -61,10 +61,6 @@ let $route = useRoute()
     color: white;
     background-color: $base-menu-background;
     transition: all 0.3s;
-
-    &.fold {
-      width: $base-menu-min-width;
-    }
 
     .scrollbar {
       width: 100%;

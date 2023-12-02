@@ -10,12 +10,12 @@
         <el-table-column type="index" label="序號" width="80" align="center" />
         <el-table-column prop="tmName" label="品牌名稱" width="width" />
         <el-table-column prop="name" label="品牌LOGO" width="width">
-          <template v-slot="{ row, $inde }">
+          <template v-slot="{ row }">
             <img :src="row.logoUrl" style="width: 80px; height: 80px" />
           </template>
         </el-table-column>
         <el-table-column prop="address" label="品牌操作" width="width">
-          <template v-slot="{ row, $inde }">
+          <template v-slot="{ row }">
             <el-button
               type="warning"
               icon="Edit"
@@ -44,17 +44,24 @@
     <el-dialog v-model="dialogFormVisible" title="添加品牌">
       <el-form style="width: 80%">
         <el-form-item label="名稱" label-width="80px">
-          <el-input placeholder="請輸入品牌名稱" />
+          <el-input
+            placeholder="請輸入品牌名稱"
+            v-model="trademarkParams.tmName"
+          />
         </el-form-item>
         <el-form-item label="LOGO" label-width="80px">
           <el-upload
             class="avatar-uploader"
-            action=""
+            action="/api/admin/product/fileUpload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <img
+              v-if="trademarkParams.logoUrl"
+              :src="trademarkParams.logoUrl"
+              class="avatar"
+            />
             <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </el-form-item>
@@ -75,12 +82,16 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { reqHasTrademark } from '@/api/product/trademark'
 import type {
   TradeMarkResponseData,
   Records,
+  TradeMark,
 } from '@/api/product/trademark/type.ts'
+
+import type { UploadProps } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 let page = ref<number>(1)
 let limit = ref<number>(3)
@@ -88,6 +99,11 @@ let total = ref<number>(0)
 let record = ref<Records>([])
 // 控制對話框顯示與隱藏
 let dialogFormVisible = ref<boolean>(false)
+// 定義收集新增品牌數據
+let trademarkParams = reactive<TradeMark>({
+  tmName: '',
+  logoUrl: '',
+})
 const getHasTrademark = async (pager = 1) => {
   page.value = pager
   let result: TradeMarkResponseData = await reqHasTrademark(
@@ -121,6 +137,21 @@ const cancel = () => {
 
 const confirm = () => {
   dialogFormVisible.value = false
+}
+
+const handleAvatarSuccess: UploadProps['onSuccess'] = (response: any) => {
+  trademarkParams.logoUrl = response.data
+}
+
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile: any) => {
+  if (rawFile.type !== 'image/jpeg') {
+    ElMessage.error('Avatar picture must be JPG format!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('Avatar picture size can not exceed 2MB!')
+    return false
+  }
+  return true
 }
 </script>
 

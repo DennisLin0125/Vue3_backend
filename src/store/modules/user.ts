@@ -46,7 +46,7 @@ const useUserStore = defineStore('User', {
     },
     //   用戶登出
     async userLogout() {
-      let result: any = await reqLogout()
+      const result: any = await reqLogout()
       if (result.code === 200) {
         this.token = ''
         this.username = ''

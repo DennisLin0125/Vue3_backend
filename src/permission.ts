@@ -6,15 +6,15 @@ nProgress.configure({ showSpinner: false })
 
 import pinia from '@/store'
 import useUserStore from '@/store/modules/user.ts'
-let userStore = useUserStore(pinia)
-let username = userStore.username
+const userStore = useUserStore(pinia)
+const username = userStore.username
 
 import setting from '@/setting.ts'
 
 router.beforeEach(async (to: any, from: any, next: any) => {
   document.title = `${setting.title}-${to.meta.title}`
   nProgress.start()
-  let token = userStore.token
+  const token = userStore.token
   if (token) {
     if (to.path == '/login') {
       next('/')

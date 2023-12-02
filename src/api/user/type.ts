@@ -1,37 +1,29 @@
-// 登入API需要攜帶的參數類型
-export interface loginForm {
+//定義使用者相關資料的ts類型
+//使用者登入介面攜帶參數的ts類型
+export interface loginFormData {
   username: string
   password: string
 }
 
-interface dataType {
-  token?: string
-  message?: string
-}
-
-// 登入API返回數據類型
-export interface loginResponseData {
+//定義全部介面回傳資料都擁有ts類型
+export interface ResponseData {
   code: number
-  data: dataType
+  message: string
+  ok: boolean
 }
 
-interface userInfo {
-  userId: number
-  avatar: string
-  username: string
-  password: string
-  desc: string
-  roles: string[]
-  buttons: string[]
-  routes: []
-  token: string
+//定義登入介面回傳資料類型
+export interface loginResponseData extends ResponseData {
+  data: string
 }
 
-interface user {
-  checkUser: userInfo
-}
-//定義服務器返回的數據類型
-export interface userResponseData {
-  code: number
-  data: user
+//定義取得使用者資訊回傳資料類型
+export interface userInfoReponseData extends ResponseData {
+  data: {
+    routes: string[]
+    buttons: string[]
+    roles: string[]
+    name: string
+    avatar: string
+  }
 }

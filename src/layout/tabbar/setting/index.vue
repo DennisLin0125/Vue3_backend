@@ -60,14 +60,18 @@ const fullScreen = () => {
     document.exitFullscreen()
   }
 }
-const logout = () => {
-  userStore.userLogout()
-  $router.push({
-    path: '/login',
-    query: {
-      redirect: $route.path,
-    },
-  })
+const logout = async () => {
+  try {
+    await userStore.userLogout()
+    await $router.push({
+      path: '/login',
+      query: {
+        redirect: $route.path,
+      },
+    })
+  } catch (e) {
+    alert('退出登入失敗')
+  }
 }
 </script>
 

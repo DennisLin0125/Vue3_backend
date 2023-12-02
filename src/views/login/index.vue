@@ -62,7 +62,7 @@ let $router = useRouter()
 let $route = useRoute()
 let userStore = useUserStore()
 // 收集表單數據
-let loginForm = reactive({ username: 'admin', password: '111111' })
+let loginForm = reactive({ username: 'admin', password: 'atguigu123' })
 // 定義變量loading效果
 let loading = ref(false)
 // 獲取表單元素
@@ -100,7 +100,7 @@ const validatorUserName = (rule: any, value: any, callback: any) => {
   }
 }
 const validatorPassword = (rule: any, value: any, callback: any) => {
-  if (/^\d{6,10}$/.test(value)) {
+  if (value.length >= 6) {
     callback()
   } else {
     callback(new Error('密碼長度為6-10位'))

@@ -26,7 +26,7 @@
     </span>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item>退出登入</el-dropdown-item>
+        <el-dropdown-item @click="logout">退出登入</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
@@ -44,6 +44,11 @@ let layoutSettingStore = useLayoutSettingStore()
 
 import useUserStore from '@/store/modules/user.ts'
 let userStore = useUserStore()
+
+import { useRouter, useRoute } from 'vue-router'
+let $router = useRouter()
+let $route = useRoute()
+
 const updateReflash = () => {
   layoutSettingStore.reflash = !layoutSettingStore.reflash
 }
@@ -54,6 +59,15 @@ const fullScreen = () => {
   } else {
     document.exitFullscreen()
   }
+}
+const logout = () => {
+  userStore.userLogout()
+  $router.push({
+    path: '/login',
+    query: {
+      redirect: $route.path,
+    },
+  })
 }
 </script>
 

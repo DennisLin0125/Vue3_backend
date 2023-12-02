@@ -53,12 +53,13 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 // 引入小倉庫
 import useUserStore from '@/store/modules/user.ts'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElNotification } from 'element-plus'
 // 引入獲取當前時間的函數
 import { getTime } from '@/utils/time.ts'
 // 獲取路由器
 let $router = useRouter()
+let $route = useRoute()
 let userStore = useUserStore()
 // 收集表單數據
 let loginForm = reactive({ username: 'admin', password: '111111' })
@@ -73,7 +74,9 @@ const login = async () => {
   loading.value = true
   try {
     await userStore.userLogin(loginForm)
-    await $router.push('/')
+    let redirect: any = $route.query.redirect
+    await $router.push({ path: redirect || '/' })
+
     ElNotification({
       type: 'success',
       message: '歡迎回來^^',

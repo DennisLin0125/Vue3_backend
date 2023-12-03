@@ -22,7 +22,16 @@
               size="small"
               @click="updateTrademark(row)"
             ></el-button>
-            <el-button type="danger" icon="Delete" size="small"></el-button>
+            <el-popconfirm
+              :title="`您確定要刪除 ${row.tmName} ?`"
+              width="200px"
+              icon="Delete"
+              @confirm="deletTrademark(row.id)"
+            >
+              <template #reference>
+                <el-button type="danger" icon="Delete" size="small"></el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -94,6 +103,7 @@ import { ref, onMounted, reactive, nextTick } from 'vue'
 import {
   reqHasTrademark,
   reqAddOrUpdateTrademark,
+  reqDeleteTrademark,
 } from '@/api/product/trademark'
 import type {
   TradeMarkResponseData,
@@ -134,6 +144,22 @@ onMounted(() => {
 
 const handleSizeChange = () => {
   getHasTrademark()
+}
+
+const deletTrademark = async (id: number) => {
+  const result = await reqDeleteTrademark(id)
+  if (result.code === 200) {
+    ElMessage({
+      type: 'success',
+      message: '刪除成功',
+    })
+    await getHasTrademark(record.value.length > 1 ? page.value : page.value - 1)
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '刪除失敗',
+    })
+  }
 }
 
 const addTrademark = () => {

@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { reqC1 } from '@/api/product/attr'
+import type { CategoryResponseData } from '@/api/product/attr/type.ts'
+import type { CategoryState } from '@/store/modules/types/type.ts'
 
 let useCategoryStore = defineStore('Category', {
-  state: () => {
+  state: (): CategoryState => {
     return {
       c1Arr: [],
       c1Id: '',
@@ -10,7 +12,7 @@ let useCategoryStore = defineStore('Category', {
   },
   actions: {
     async getC1() {
-      let result: any = await reqC1()
+      let result: CategoryResponseData = await reqC1()
       if (result.code === 200) {
         this.c1Arr = result.data
         return 'ok'

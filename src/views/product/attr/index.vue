@@ -4,7 +4,9 @@
       <Category />
     </div>
     <el-card style="margin: 10px 0">
-      <el-button type="primary" icon="Plus">添加屬性</el-button>
+      <el-button type="primary" icon="Plus" :disabled="!categoryStore.c3Id">
+        添加屬性
+      </el-button>
       <el-table border style="margin: 10px 0">
         <el-table-column type="index" label="序號" width="80" align="center" />
         <el-table-column prop="aaa" label="屬性名稱" width="120" />
@@ -23,6 +25,8 @@
 </template>
 
 <script lang="ts">
+import useCategoryStore from '@/store/modules/category.ts'
+let categoryStore = useCategoryStore()
 export default {
   name: 'Attr',
 }

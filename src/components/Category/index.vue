@@ -1,8 +1,12 @@
 <template>
   <el-card>
-    <el-form inline="true">
+    <el-form inline>
       <el-form-item label="一級分類">
-        <el-select v-model="categoryStore.c1Id" @change="handlerC1">
+        <el-select
+          :disabled="scene != 0"
+          v-model="categoryStore.c1Id"
+          @change="handlerC1"
+        >
           <el-option
             v-for="c1 in categoryStore.c1Arr"
             :key="c1.id"
@@ -12,7 +16,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="二級分類">
-        <el-select v-model="categoryStore.c2Id" @change="handlerC2">
+        <el-select
+          :disabled="scene != 0"
+          v-model="categoryStore.c2Id"
+          @change="handlerC2"
+        >
           <el-option
             v-for="c2 in categoryStore.c2Arr"
             :key="c2.id"
@@ -22,7 +30,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="三級分類">
-        <el-select v-model="categoryStore.c3Id" @change="handlerC3">
+        <el-select
+          :disabled="scene != 0"
+          v-model="categoryStore.c3Id"
+          @change="handlerC3"
+        >
           <el-option
             v-for="c3 in categoryStore.c3Arr"
             :key="c3.id"
@@ -44,6 +56,7 @@ export default {
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import useCategoryStore from '@/store/modules/category.ts'
+defineProps(['scene'])
 
 let categoryStore = useCategoryStore()
 

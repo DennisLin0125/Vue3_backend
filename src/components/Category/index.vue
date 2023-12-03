@@ -26,6 +26,18 @@ export default {
 }
 </script>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import {onMounted} from "vue";
+import {reqC1} from "@/api/product/attr";
+
+onMounted( () => {
+  // getC1()
+})
+
+const getC1 = async () => {
+  // let result =  await reqC1()
+  console.log(result)
+}
+</script>
 
 <style scoped lang="scss"></style>

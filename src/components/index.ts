@@ -1,11 +1,12 @@
 // 自訂義組件
 
 import SvgIcon from '@/components/SvgIcon/index.vue'
+import Category from '@/components/Category/index.vue'
 
 // 引入全部icon
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-const allGlobalComponent = { SvgIcon }
+const allGlobalComponent = { SvgIcon, Category }
 
 export default {
   install(app: any) {

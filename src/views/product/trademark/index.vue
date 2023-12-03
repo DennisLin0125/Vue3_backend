@@ -20,7 +20,7 @@
               type="warning"
               icon="Edit"
               size="small"
-              @click="updateTrademark"
+              @click="updateTrademark(row)"
             ></el-button>
             <el-button type="danger" icon="Delete" size="small"></el-button>
           </template>
@@ -41,7 +41,10 @@
     </el-card>
 
     <!--  對話框-->
-    <el-dialog v-model="dialogFormVisible" title="添加品牌">
+    <el-dialog
+      v-model="dialogFormVisible"
+      :title="trademarkParams.id ? '修改品牌' : '添加品牌'"
+    >
       <el-form style="width: 80%">
         <el-form-item label="名稱" label-width="80px">
           <el-input
@@ -128,12 +131,18 @@ const handleSizeChange = () => {
 
 const addTrademark = () => {
   dialogFormVisible.value = true
+  trademarkParams.id = 0
   trademarkParams.logoUrl = ''
   trademarkParams.tmName = ''
 }
 
-const updateTrademark = () => {
+const updateTrademark = (row: TradeMark) => {
   dialogFormVisible.value = true
+  // ES6語法
+  Object.assign(trademarkParams, row)
+  // trademarkParams.id=row.id
+  // trademarkParams.tmName=row.tmName
+  // trademarkParams.logoUrl=row.logoUrl
 }
 
 const cancel = () => {
@@ -146,13 +155,13 @@ const confirm = async () => {
     dialogFormVisible.value = false
     ElMessage({
       type: 'success',
-      message: '添加品牌成功',
+      message: trademarkParams.id ? '修改品牌成功' : '添加品牌成功',
     })
-    await getHasTrademark()
+    await getHasTrademark(trademarkParams.id ? page.value : 1)
   } else {
     ElMessage({
       type: 'error',
-      message: '添加品牌失敗',
+      message: trademarkParams.id ? '修改品牌失敗' : '添加品牌失敗',
     })
     dialogFormVisible.value = false
   }

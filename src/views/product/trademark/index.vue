@@ -45,14 +45,19 @@
       v-model="dialogFormVisible"
       :title="trademarkParams.id ? '修改品牌' : '添加品牌'"
     >
-      <el-form style="width: 80%">
-        <el-form-item label="名稱" label-width="80px">
+      <el-form
+        style="width: 80%"
+        :model="trademarkParams"
+        :rules="rules"
+        ref="formRef"
+      >
+        <el-form-item label="品牌名稱" label-width="100px" prop="tmName">
           <el-input
             placeholder="請輸入品牌名稱"
             v-model="trademarkParams.tmName"
           />
         </el-form-item>
-        <el-form-item label="LOGO" label-width="80px">
+        <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
           <el-upload
             class="avatar-uploader"
             action="/api/admin/product/fileUpload"
@@ -85,7 +90,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import {
   reqHasTrademark,
   reqAddOrUpdateTrademark,
@@ -110,6 +115,8 @@ let trademarkParams = reactive<TradeMark>({
   tmName: '',
   logoUrl: '',
 })
+// 獲取form的組件實例
+let formRef = ref()
 const getHasTrademark = async (pager = 1) => {
   page.value = pager
   let result: TradeMarkResponseData = await reqHasTrademark(
@@ -134,9 +141,19 @@ const addTrademark = () => {
   trademarkParams.id = 0
   trademarkParams.logoUrl = ''
   trademarkParams.tmName = ''
+
+  nextTick(() => {
+    formRef.value.clearValidate('logoUrl')
+    formRef.value.clearValidate('tmName')
+  })
 }
 
 const updateTrademark = (row: TradeMark) => {
+  nextTick(() => {
+    formRef.value.clearValidate('logoUrl')
+    formRef.value.clearValidate('tmName')
+  })
+
   dialogFormVisible.value = true
   // ES6語法
   Object.assign(trademarkParams, row)
@@ -150,6 +167,8 @@ const cancel = () => {
 }
 
 const confirm = async () => {
+  await formRef.value.validate()
+
   let result = await reqAddOrUpdateTrademark(trademarkParams)
   if (result.code === 200) {
     dialogFormVisible.value = false
@@ -167,8 +186,41 @@ const confirm = async () => {
   }
 }
 
+const validatorTmName = (rule: any, value: any, callback: any) => {
+  if (value.trim().length >= 2) {
+    callback()
+  } else {
+    callback(new Error('品牌名稱位數需大於等於2'))
+  }
+}
+const validatorLogoUrl = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    callback(new Error('品牌logo不能為空'))
+  } else {
+    callback()
+  }
+}
+
+const rules = {
+  tmName: [
+    {
+      required: true,
+      trigger: 'blur',
+      validator: validatorTmName,
+    },
+  ],
+  logoUrl: [
+    {
+      required: true,
+      validator: validatorLogoUrl,
+    },
+  ],
+}
+
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response: any) => {
   trademarkParams.logoUrl = response.data
+  // 清除校驗錯誤訊息
+  formRef.value.clearValidate('logoUrl')
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile: any) => {

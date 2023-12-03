@@ -110,7 +110,7 @@ export default {
 
 <script setup lang="ts">
 import Category from '@/components/Category/index.vue'
-import { watch, ref, reactive } from 'vue'
+import { watch, ref, reactive, onMounted } from 'vue'
 import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
 import useCategoryStore from '@/store/modules/category.ts'
 import type { AttrResponseData, Attr } from '@/api/product/attr/type.ts'
@@ -124,6 +124,15 @@ let attrParams = reactive<Attr>({
   attrValueList: [],
   categoryId: '',
   categoryLevel: 3,
+})
+
+onMounted(() => {
+  categoryStore.c1Id = ''
+  categoryStore.c2Id = ''
+  categoryStore.c3Id = ''
+  categoryStore.c1Arr = []
+  categoryStore.c2Arr = []
+  categoryStore.c3Arr = []
 })
 
 watch(
@@ -170,12 +179,12 @@ const addAttrValue = () => {
 const save = async () => {
   const result = await reqAddOrUpdateAttr(attrParams)
   if (result.code === 200) {
-    scene.value = 0
     await getAttr()
     ElMessage({
       type: 'success',
       message: '添加成功',
     })
+    scene.value = 0
   } else {
     scene.value = 0
     ElMessage({

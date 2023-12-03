@@ -27,10 +27,10 @@ export default {
 </script>
 
 <script setup lang="ts">
-import {onMounted} from "vue";
-import {reqC1} from "@/api/product/attr";
+import { onMounted } from 'vue'
+import { reqC1 } from '@/api/product/attr'
 
-onMounted( () => {
+onMounted(() => {
   // getC1()
 })
 

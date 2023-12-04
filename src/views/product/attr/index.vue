@@ -79,19 +79,26 @@
           <el-table-column label="屬性值名稱">
             <template v-slot="{ row, $index }">
               <el-input
+                @blur="toLook(row, $index)"
+                v-if="row.flag"
                 placeholder="請輸入屬性值名稱"
                 v-model="row.valueName"
               />
+              <div @click="toEdit(row)" v-else>
+                <span>{{ row.valueName }}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column label="屬性值操作">
-            <template v-slot="{ row, $index }"></template>
+            <template v-slot="{ row, $index }">
+              <el-button type="danger" icon="Delete" size="small" />
+            </template>
           </el-table-column>
         </el-table>
 
         <el-button
           @click="save"
-          :disabled="!attrParams.attrName"
+          :disabled="attrParams.attrValueList.length <= 0"
           type="primary"
         >
           保存
@@ -113,12 +120,17 @@ import Category from '@/components/Category/index.vue'
 import { watch, ref, reactive, onMounted } from 'vue'
 import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
 import useCategoryStore from '@/store/modules/category.ts'
-import type { AttrResponseData, Attr } from '@/api/product/attr/type.ts'
+import type {
+  AttrResponseData,
+  Attr,
+  AttrValue,
+} from '@/api/product/attr/type.ts'
 import { ElMessage } from 'element-plus'
 
 let categoryStore = useCategoryStore()
 let attrArr = ref<Attr[]>([])
 let scene = ref<number>(0)
+let flag = ref<boolean>(true)
 let attrParams = reactive<Attr>({
   attrName: '',
   attrValueList: [],
@@ -173,6 +185,7 @@ const cancel = () => {
 const addAttrValue = () => {
   attrParams.attrValueList.push({
     valueName: '',
+    flag: true,
   })
 }
 
@@ -192,6 +205,41 @@ const save = async () => {
       message: '添加失敗',
     })
   }
+}
+
+const toLook = (row: AttrValue, $index: number) => {
+  if (row.valueName.trim() === '') {
+    // 刪除對應屬性為空的元素
+    attrParams.attrValueList.splice($index, 1)
+    ElMessage({
+      type: 'error',
+      message: '屬性值名稱不能為空',
+    })
+    return
+  }
+  // 判斷是否重複
+  let result = attrParams.attrValueList.find((item) => {
+    // 排除自己以外的
+    if (item !== row) {
+      return item.valueName === row.valueName
+    }
+  })
+
+  if (result) {
+    // 刪除對應屬性為空的元素
+    attrParams.attrValueList.splice($index, 1)
+
+    ElMessage({
+      type: 'error',
+      message: '屬性值不能重複',
+    })
+    return
+  }
+  row.flag = false
+}
+
+const toEdit = (row: AttrValue) => {
+  row.flag = true
 }
 </script>
 

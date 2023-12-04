@@ -83,15 +83,21 @@
                 v-if="row.flag"
                 placeholder="請輸入屬性值名稱"
                 v-model="row.valueName"
+                :ref="(vc: any) => (inputArr[$index] = vc)"
               />
-              <div @click="toEdit(row)" v-else>
+              <div @click="toEdit(row, $index)" v-else>
                 <span>{{ row.valueName }}</span>
               </div>
             </template>
           </el-table-column>
           <el-table-column label="屬性值操作">
             <template v-slot="{ row, $index }">
-              <el-button type="danger" icon="Delete" size="small" />
+              <el-button
+                @click="deleteAttr(row, $index)"
+                type="danger"
+                icon="Delete"
+                size="small"
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -117,7 +123,7 @@ export default {
 
 <script setup lang="ts">
 import Category from '@/components/Category/index.vue'
-import { watch, ref, reactive, onMounted } from 'vue'
+import { watch, ref, reactive, onMounted, nextTick } from 'vue'
 import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
 import useCategoryStore from '@/store/modules/category.ts'
 import type {
@@ -130,7 +136,7 @@ import { ElMessage } from 'element-plus'
 let categoryStore = useCategoryStore()
 let attrArr = ref<Attr[]>([])
 let scene = ref<number>(0)
-let flag = ref<boolean>(true)
+let inputArr = ref<any>([])
 let attrParams = reactive<Attr>({
   attrName: '',
   attrValueList: [],
@@ -187,6 +193,10 @@ const addAttrValue = () => {
     valueName: '',
     flag: true,
   })
+  //   獲取最後一個input組件
+  nextTick(() => {
+    inputArr.value[attrParams.attrValueList.length - 1].focus()
+  })
 }
 
 const save = async () => {
@@ -238,8 +248,15 @@ const toLook = (row: AttrValue, $index: number) => {
   row.flag = false
 }
 
-const toEdit = (row: AttrValue) => {
+const toEdit = (row: AttrValue, $index: number) => {
   row.flag = true
+  nextTick(() => {
+    inputArr.value[$index].focus()
+  })
+}
+
+const deleteAttr = (row: AttrValue, $index: number) => {
+  attrParams.attrValueList.splice($index, 1)
 }
 </script>
 

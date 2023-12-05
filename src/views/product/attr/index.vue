@@ -130,7 +130,6 @@ export default {
 </script>
 
 <script setup lang="ts">
-import Category from '@/components/Category/index.vue'
 import { watch, ref, reactive, nextTick, onBeforeUnmount } from 'vue'
 import { reqAttr, reqAddOrUpdateAttr, reqRemoveAttr } from '@/api/product/attr'
 import useCategoryStore from '@/store/modules/category.ts'

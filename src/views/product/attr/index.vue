@@ -36,7 +36,7 @@
           <el-table-column label="操作" width="120">
             <template v-slot="{ row, $index }">
               <el-button
-                @click="updateAttr"
+                @click="updateAttr(row)"
                 type="warning"
                 icon="Edit"
                 size="small"
@@ -132,6 +132,7 @@ import type {
   AttrValue,
 } from '@/api/product/attr/type.ts'
 import { ElMessage } from 'element-plus'
+import '@/views/product/attr/index.vue'
 
 let categoryStore = useCategoryStore()
 let attrArr = ref<Attr[]>([])
@@ -180,8 +181,10 @@ const addAttr = () => {
   scene.value = 1
 }
 
-const updateAttr = () => {
+const updateAttr = (row: Attr) => {
   scene.value = 1
+  // 深拷貝
+  Object.assign(attrParams, JSON.parse(JSON.stringify(row)))
 }
 
 const cancel = () => {

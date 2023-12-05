@@ -41,7 +41,15 @@
                 icon="Edit"
                 size="small"
               />
-              <el-button type="danger" icon="Delete" size="small" />
+              <el-popconfirm
+                @confirm="deleteAttrValue(row.id)"
+                width="250px"
+                :title="`你確定要刪除 ${row.attrName} ?`"
+              >
+                <template #reference>
+                  <el-button type="danger" icon="Delete" size="small" />
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -123,8 +131,8 @@ export default {
 
 <script setup lang="ts">
 import Category from '@/components/Category/index.vue'
-import { watch, ref, reactive, onMounted, nextTick } from 'vue'
-import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
+import { watch, ref, reactive, nextTick, onBeforeUnmount } from 'vue'
+import { reqAttr, reqAddOrUpdateAttr, reqRemoveAttr } from '@/api/product/attr'
 import useCategoryStore from '@/store/modules/category.ts'
 import type {
   AttrResponseData,
@@ -145,13 +153,8 @@ let attrParams = reactive<Attr>({
   categoryLevel: 3,
 })
 
-onMounted(() => {
-  categoryStore.c1Id = ''
-  categoryStore.c2Id = ''
-  categoryStore.c3Id = ''
-  categoryStore.c1Arr = []
-  categoryStore.c2Arr = []
-  categoryStore.c3Arr = []
+onBeforeUnmount(() => {
+  categoryStore.$reset()
 })
 
 watch(
@@ -260,6 +263,16 @@ const toEdit = (row: AttrValue, $index: number) => {
 
 const deleteAttr = (row: AttrValue, $index: number) => {
   attrParams.attrValueList.splice($index, 1)
+}
+
+const deleteAttrValue = async (attrId: number) => {
+  const result: any = await reqRemoveAttr(attrId)
+  if (result.code === 200) {
+    await getAttr()
+    ElMessage({ type: 'success', message: '刪除成功' })
+  } else {
+    ElMessage({ type: 'error', message: '刪除失敗' })
+  }
 }
 </script>
 

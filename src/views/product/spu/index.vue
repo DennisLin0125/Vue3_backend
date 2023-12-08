@@ -2,43 +2,59 @@
   <div>
     <Category :scene="scene" />
     <el-card style="margin: 10px 0">
-      <el-button type="primary" icon="Plus" :disabled="!categoryStore.c3Id">
-        添加SPU
-      </el-button>
-      <el-table border style="margin: 10px 0" :data="records">
-        <el-table-column
-          type="index"
-          label="序號"
-          width="80"
-          align="center"
-        ></el-table-column>
-        <el-table-column prop="spuName" label="SPU名稱" />
-        <el-table-column
-          prop="description"
-          label="SPU描述"
-          show-overflow-tooltip="..."
+      <div v-show="scene == 0">
+        <el-button
+          @click="addSpu"
+          type="primary"
+          icon="Plus"
+          :disabled="!categoryStore.c3Id"
         >
-          <template v-slot="{ row, $index }"></template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template v-slot="{ row, $index }">
-            <el-button type="primary" icon="Plus" title="添加SKU" />
-            <el-button type="warning" icon="Edit" title="修改SPU" />
-            <el-button type="info" icon="View" title="查看SKU" />
-            <el-button type="danger" icon="Delete" title="刪除SKU" />
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        v-model:current-page="page"
-        v-model:page-size="size"
-        :page-sizes="[3, 5, 10]"
-        background
-        layout="prev, pager, next, jumper, ->, sizes, total"
-        :total="total"
-        @size-change="changeSize"
-        @current-change="getHasSpu"
-      />
+          添加SPU
+        </el-button>
+        <el-table border style="margin: 10px 0" :data="records">
+          <el-table-column
+            type="index"
+            label="序號"
+            width="80"
+            align="center"
+          ></el-table-column>
+          <el-table-column prop="spuName" label="SPU名稱" />
+          <el-table-column
+            prop="description"
+            label="SPU描述"
+            show-overflow-tooltip="..."
+          >
+            <template v-slot="{ row, $index }"></template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template v-slot="{ row, $index }">
+              <el-button type="primary" icon="Plus" title="添加SKU" />
+              <el-button
+                @click="updateSpu"
+                type="warning"
+                icon="Edit"
+                title="修改SPU"
+              />
+              <el-button type="info" icon="View" title="查看SKU" />
+              <el-button type="danger" icon="Delete" title="刪除SKU" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          v-model:current-page="page"
+          v-model:page-size="size"
+          :page-sizes="[3, 5, 10]"
+          background
+          layout="prev, pager, next, jumper, ->, sizes, total"
+          :total="total"
+          @size-change="changeSize"
+          @current-change="getHasSpu"
+        />
+      </div>
+      <!--      添加修改spu-->
+      <SpuForm v-show="scene == 1" @changeScene="changeScene" />
+      <!--      添加Sku-->
+      <SkuForm v-show="scene == 2" />
     </el-card>
   </div>
 </template>
@@ -54,7 +70,9 @@ import { ref, watch } from 'vue'
 import type { HasSpuResponseData, Records } from '@/api/product/spu/type.ts'
 import useCategoryStore from '@/store/modules/category.ts'
 import { reqHasSpu } from '@/api/product/spu'
-
+// 引入子組件
+import SpuForm from '@/views/product/spu/spuForm.vue'
+import SkuForm from '@/views/product/spu/skuForm.vue'
 let categoryStore = useCategoryStore()
 //場景的數據
 let scene = ref<number>(0)
@@ -88,6 +106,19 @@ const getHasSpu = async (pages = 1) => {
 
 const changeSize = () => {
   getHasSpu()
+}
+
+const addSpu = () => {
+  scene.value = 1
+}
+
+const updateSpu = () => {
+  scene.value = 1
+}
+
+// 自訂義事件回調
+const changeScene = (num: number) => {
+  scene.value = num
 }
 </script>
 

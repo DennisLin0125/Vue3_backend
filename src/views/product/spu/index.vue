@@ -2,24 +2,30 @@
   <div>
     <Category :scene="scene" />
     <el-card style="margin: 10px 0">
-      <el-button type="primary" icon="Plus">添加SPU</el-button>
-      <el-table border style="margin: 10px 0">
+      <el-button type="primary" icon="Plus" :disabled="!categoryStore.c3Id">
+        添加SPU
+      </el-button>
+      <el-table border style="margin: 10px 0" :data="records">
         <el-table-column
           type="index"
           label="序號"
           width="80"
           align="center"
         ></el-table-column>
-        <el-table-column label="SPU名稱"></el-table-column>
-        <el-table-column label="SPU描述">
+        <el-table-column prop="spuName" label="SPU名稱" />
+        <el-table-column
+          prop="description"
+          label="SPU描述"
+          show-overflow-tooltip="..."
+        >
           <template v-slot="{ row, $index }"></template>
         </el-table-column>
         <el-table-column label="操作">
           <template v-slot="{ row, $index }">
-            <el-button type="primary" icon="Plus" />
-            <el-button type="warning" icon="Edit" />
-            <el-button type="info" icon="Plus" />
-            <el-button type="danger" icon="Delete" />
+            <el-button type="primary" icon="Plus" title="添加SKU" />
+            <el-button type="warning" icon="Edit" title="修改SPU" />
+            <el-button type="info" icon="View" title="查看SKU" />
+            <el-button type="danger" icon="Delete" title="刪除SKU" />
           </template>
         </el-table-column>
       </el-table>
@@ -30,8 +36,8 @@
         background
         layout="prev, pager, next, jumper, ->, sizes, total"
         :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+        @size-change="changeSize"
+        @current-change="getHasSpu"
       />
     </el-card>
   </div>
@@ -44,12 +50,45 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import type { HasSpuResponseData, Records } from '@/api/product/spu/type.ts'
+import useCategoryStore from '@/store/modules/category.ts'
+import { reqHasSpu } from '@/api/product/spu'
+
+let categoryStore = useCategoryStore()
 //場景的數據
 let scene = ref<number>(0)
-const page = ref(1)
-const size = ref(3)
-const total = ref(20)
+const page = ref<number>(1)
+const size = ref<number>(3)
+const total = ref<number>(20)
+const records = ref<Records>([])
+
+// 監聽三級分類數據
+watch(
+  () => categoryStore.c3Id,
+  () => {
+    if (categoryStore.c3Id) {
+      getHasSpu()
+    }
+  },
+)
+
+const getHasSpu = async (pages = 1) => {
+  page.value = pages
+  let result: HasSpuResponseData = await reqHasSpu(
+    page.value,
+    size.value,
+    categoryStore.c3Id,
+  )
+  if (result.code === 200) {
+    total.value = result.data.total
+    records.value = result.data.records
+  }
+}
+
+const changeSize = () => {
+  getHasSpu()
+}
 </script>
 
 <style scoped lang="scss"></style>

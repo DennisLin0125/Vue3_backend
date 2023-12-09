@@ -28,7 +28,12 @@
           </el-table-column>
           <el-table-column label="操作">
             <template v-slot="{ row, $index }">
-              <el-button type="primary" icon="Plus" title="添加SKU" />
+              <el-button
+                @click="addSku"
+                type="primary"
+                icon="Plus"
+                title="添加SKU"
+              />
               <el-button
                 @click="updateSpu(row)"
                 type="warning"
@@ -54,7 +59,7 @@
       <!--      添加修改spu-->
       <SpuForm ref="spuForm" v-show="scene == 1" @changeScene="changeScene" />
       <!--      添加Sku-->
-      <SkuForm v-show="scene == 2" />
+      <SkuForm ref="skuForm" v-show="scene == 2" @changeScene="changeScene" />
     </el-card>
   </div>
 </template>
@@ -133,6 +138,10 @@ const changeScene = (obj: any) => {
   } else {
     getHasSpu()
   }
+}
+
+const addSku = () => {
+  scene.value = 2
 }
 </script>
 

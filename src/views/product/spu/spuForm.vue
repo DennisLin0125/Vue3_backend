@@ -1,15 +1,25 @@
 <template>
   <el-form label-width="100">
     <el-form-item label="SPU名稱">
-      <el-input placeholder="請輸入SPU名稱" />
+      <el-input placeholder="請輸入SPU名稱" v-model="SpuParams.spuName" />
     </el-form-item>
     <el-form-item label="SPU品牌">
-      <el-select placeholder="請選擇品牌">
-        <el-option>1</el-option>
+      <el-select v-model="SpuParams.tmId">
+        <el-option
+          :value="item.id"
+          v-for="item in allTradeMark"
+          :key="item.id"
+          :label="item.tmName"
+        ></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="SPU描述">
-      <el-input type="textarea" placeholder="請輸入描述" rows="4" />
+      <el-input
+        type="textarea"
+        placeholder="請輸入描述"
+        rows="4"
+        v-model="SpuParams.description"
+      />
     </el-form-item>
     <el-form-item label="SPU照片">
       <el-upload
@@ -86,7 +96,19 @@ let allTradeMark = ref<TradeMark[]>([])
 let spuImageList = ref<SpuImg[]>([])
 let spuHasSaleAttr = ref<SaleAttr[]>([])
 let allSaleAttr = ref<HasSaleAttr[]>([])
+
+//儲存已有的SPU對象
+let SpuParams = ref<SpuData>({
+  category3Id: '', //收集三級分類的ID
+  spuName: '', //SPU的名字
+  description: '', //SPU的描述
+  tmId: '', //品牌的ID
+  spuImageList: [],
+  spuSaleAttrList: [],
+})
 const initHasSpuData = async (spu: SpuData) => {
+  // 儲存已有的Spu
+  SpuParams.value = spu
   // 獲取全部品牌的數據
   let resultAllTradeMark: AllTradeMark = await reqAllTradeMark()
   if (resultAllTradeMark.code === 200) {

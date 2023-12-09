@@ -30,7 +30,7 @@
             <template v-slot="{ row, $index }">
               <el-button type="primary" icon="Plus" title="添加SKU" />
               <el-button
-                @click="updateSpu"
+                @click="updateSpu(row)"
                 type="warning"
                 icon="Edit"
                 title="修改SPU"
@@ -52,7 +52,7 @@
         />
       </div>
       <!--      添加修改spu-->
-      <SpuForm v-show="scene == 1" @changeScene="changeScene" />
+      <SpuForm ref="spuForm" v-show="scene == 1" @changeScene="changeScene" />
       <!--      添加Sku-->
       <SkuForm v-show="scene == 2" />
     </el-card>
@@ -67,7 +67,11 @@ export default {
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { HasSpuResponseData, Records } from '@/api/product/spu/type.ts'
+import type {
+  HasSpuResponseData,
+  Records,
+  SpuData,
+} from '@/api/product/spu/type.ts'
 import useCategoryStore from '@/store/modules/category.ts'
 import { reqHasSpu } from '@/api/product/spu'
 // 引入子組件
@@ -80,6 +84,8 @@ const page = ref<number>(1)
 const size = ref<number>(3)
 const total = ref<number>(20)
 const records = ref<Records>([])
+// 獲取子組件實例
+let spuForm = ref<any>()
 
 // 監聽三級分類數據
 watch(
@@ -112,8 +118,10 @@ const addSpu = () => {
   scene.value = 1
 }
 
-const updateSpu = () => {
+const updateSpu = (row: SpuData) => {
   scene.value = 1
+  // 調用子組件的方法
+  spuForm.value.initHasSpuData(row)
 }
 
 // 自訂義事件回調

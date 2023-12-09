@@ -56,11 +56,61 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import type {
+  AllTradeMark,
+  SpuData,
+  SpuHasImg,
+  SaleAttrResponseData,
+  HasSaleAttrResponseData,
+  SpuImg,
+  SaleAttr,
+  HasSaleAttr,
+} from '@/api/product/spu/type.ts'
+import {
+  reqAllTradeMark,
+  reqSpuImageList,
+  reqSpuHasSaleAttr,
+  reqAllSaleAttr,
+} from '@/api/product/spu'
+import { TradeMark } from '@/api/product/trademark/type.ts'
+
 let $emit = defineEmits(['changeScene'])
 
 const cancel = () => {
   $emit('changeScene', 0)
 }
+
+// 儲存數據
+let allTradeMark = ref<TradeMark[]>([])
+let spuImageList = ref<SpuImg[]>([])
+let spuHasSaleAttr = ref<SaleAttr[]>([])
+let allSaleAttr = ref<HasSaleAttr[]>([])
+const initHasSpuData = async (spu: SpuData) => {
+  // 獲取全部品牌的數據
+  let resultAllTradeMark: AllTradeMark = await reqAllTradeMark()
+  if (resultAllTradeMark.code === 200) {
+    allTradeMark.value = resultAllTradeMark.data
+  }
+  let resultSpuImageList: SpuHasImg = await reqSpuImageList(spu.id as number)
+  if (resultSpuImageList.code === 200) {
+    spuImageList.value = resultSpuImageList.data
+  }
+  let resultSpuHasSaleAttr: SaleAttrResponseData = await reqSpuHasSaleAttr(
+    spu.id as number,
+  )
+  if (resultSpuHasSaleAttr.code === 200) {
+    spuHasSaleAttr.value = resultSpuHasSaleAttr.data
+  }
+  let resultAllSaleAttr: HasSaleAttrResponseData = await reqAllSaleAttr()
+  if (resultAllSaleAttr.code === 200) {
+    allSaleAttr.value = resultAllSaleAttr.data
+  }
+}
+
+defineExpose({
+  initHasSpuData,
+})
 </script>
 
 <style scoped lang="scss"></style>

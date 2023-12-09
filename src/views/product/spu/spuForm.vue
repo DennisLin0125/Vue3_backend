@@ -150,7 +150,10 @@ let dialogVisible = ref<boolean>(false)
 let dialogImageUrl = ref<string>('')
 
 const cancel = () => {
-  $emit('changeScene', 0)
+  $emit('changeScene', {
+    flag: 0,
+    params: 'update',
+  })
 }
 
 // 儲存數據
@@ -321,7 +324,10 @@ const save = async () => {
       message: SpuParams.value.id ? '更新成功' : '新增成功',
     })
     //通知父元件切換場景為0
-    $emit('changeScene', 0)
+    $emit('changeScene', {
+      flag: 0,
+      params: SpuParams.value.id ? 'update' : 'add',
+    })
   } else {
     ElMessage({
       type: 'success',
@@ -330,8 +336,35 @@ const save = async () => {
   }
 }
 
+//新增一個新的SPU初始化請求方法
+const initAddSpu = async (c3Id: number | string) => {
+  //清空數據
+  Object.assign(SpuParams.value, {
+    category3Id: '', //收集三級分類的ID
+    spuName: '', //SPU的名字
+    description: '', //SPU的描述
+    tmId: '', //品牌的ID
+    spuImageList: [],
+    spuSaleAttrList: [],
+  })
+  //清空照片
+  spuImageList.value = []
+  //清空銷售屬性
+  saleAttr.value = []
+  saleAttrIdAndValueName.value = ''
+  //儲存三級分類的ID
+  SpuParams.value.category3Id = c3Id
+  //取得全部品牌的數據
+  let result: AllTradeMark = await reqAllTradeMark()
+  let result1: HasSaleAttrResponseData = await reqAllSaleAttr()
+  //儲存數據
+  allTradeMark.value = result.data
+  allSaleAttr.value = result1.data
+}
+
 defineExpose({
   initHasSpuData,
+  initAddSpu,
 })
 </script>
 

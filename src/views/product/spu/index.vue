@@ -116,6 +116,7 @@ const changeSize = () => {
 
 const addSpu = () => {
   scene.value = 1
+  spuForm.value.initAddSpu(categoryStore.c3Id)
 }
 
 const updateSpu = (row: SpuData) => {
@@ -125,9 +126,13 @@ const updateSpu = (row: SpuData) => {
 }
 
 // 自訂義事件回調
-const changeScene = (num: number) => {
-  scene.value = num
-  getHasSpu()
+const changeScene = (obj: any) => {
+  scene.value = obj.flag
+  if (obj.params === 'update') {
+    getHasSpu(page.value)
+  } else {
+    getHasSpu()
+  }
 }
 </script>
 

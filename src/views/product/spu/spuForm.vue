@@ -42,11 +42,27 @@
       </el-dialog>
     </el-form-item>
     <el-form-item label="SPU銷售屬性">
-      <el-select placeholder="還有" style="margin-right: 10px">
-        <el-option>12</el-option>
+      <el-select
+        :placeholder="`還有 ${unSelectSaleAttr.length} 個未選`"
+        style="margin-right: 10px"
+        v-model="saleAttrIdAndValueName"
+      >
+        <el-option
+          v-for="item in unSelectSaleAttr"
+          :key="item.id"
+          :label="item.name"
+          :value="`${item.id}:${item.name}`"
+        />
       </el-select>
-      <el-button type="primary" icon="Plus">添加銷售屬性</el-button>
-      <el-table border style="margin: 10px 0" :data="spuHasSaleAttr">
+      <el-button
+        @click="addSaleAttr"
+        :disabled="!saleAttrIdAndValueName"
+        type="primary"
+        icon="Plus"
+      >
+        添加屬性
+      </el-button>
+      <el-table border style="margin: 10px 0" :data="saleAttr">
         <el-table-column label="序號" type="index" width="80" align="center" />
         <el-table-column prop="saleAttrName" label="屬性名" width="120" />
         <el-table-column label="屬性值" width="width">
@@ -70,7 +86,7 @@
               type="danger"
               icon="Delete"
               size="small"
-              @click="spuHasSaleAttr.splice($index, 1)"
+              @click="saleAttr.splice($index, 1)"
             />
           </template>
         </el-table-column>
@@ -90,7 +106,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type {
   AllTradeMark,
   SpuData,
@@ -121,7 +137,7 @@ const cancel = () => {
 // 儲存數據
 let allTradeMark = ref<TradeMark[]>([])
 let spuImageList = ref<SpuImg[]>([])
-let spuHasSaleAttr = ref<SaleAttr[]>([])
+let saleAttr = ref<SaleAttr[]>([])
 let allSaleAttr = ref<HasSaleAttr[]>([])
 
 //儲存已有的SPU對象
@@ -133,6 +149,9 @@ let SpuParams = ref<SpuData>({
   spuImageList: [],
   spuSaleAttrList: [],
 })
+
+// 收集
+let saleAttrIdAndValueName = ref<string>('')
 const initHasSpuData = async (spu: SpuData) => {
   // 儲存已有的Spu
   SpuParams.value = spu
@@ -154,7 +173,7 @@ const initHasSpuData = async (spu: SpuData) => {
     spu.id as number,
   )
   if (resultSpuHasSaleAttr.code === 200) {
-    spuHasSaleAttr.value = resultSpuHasSaleAttr.data
+    saleAttr.value = resultSpuHasSaleAttr.data
   }
   let resultAllSaleAttr: HasSaleAttrResponseData = await reqAllSaleAttr()
   if (resultAllSaleAttr.code === 200) {
@@ -189,6 +208,33 @@ const handleUpload = (file: any) => {
     })
     return false
   }
+}
+// 計算出還未擁有的屬性
+let unSelectSaleAttr = computed(() => {
+  return allSaleAttr.value.filter((item) => {
+    return saleAttr.value.every((item1) => {
+      return item.name != item1.saleAttrName
+    })
+  })
+})
+
+const addSaleAttr = () => {
+  /*
+   "baseSaleAttrId": number,
+   "saleAttrName": string,
+   "spuSaleAttrValueList": SpuSaleAttrValueList
+   */
+  const [baseSaleAttrId, saleAttrName] = saleAttrIdAndValueName.value.split(':')
+  //準備一個新的銷售屬性物件:將來帶給伺服器即可
+  let newSaleAttr: SaleAttr = {
+    baseSaleAttrId,
+    saleAttrName,
+    spuSaleAttrValueList: [],
+  }
+  //追加到數組當中
+  saleAttr.value.push(newSaleAttr)
+  //清空收集的數據
+  saleAttrIdAndValueName.value = ''
 }
 
 defineExpose({

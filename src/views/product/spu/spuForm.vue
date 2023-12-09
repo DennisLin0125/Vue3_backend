@@ -23,17 +23,22 @@
     </el-form-item>
     <el-form-item label="SPU照片">
       <el-upload
-        v-model:file-list="fileList"
-        action=""
+        v-model:file-list="spuImageList"
+        action="/api/admin/product/fileUpload"
         list-type="picture-card"
         :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove"
+        :before-upload="handleUpload"
       >
         <el-icon><Plus /></el-icon>
       </el-upload>
 
       <el-dialog v-model="dialogVisible">
-        <img w-full :src="dialogImageUrl" alt="Preview Image" />
+        <img
+          w-full
+          :src="dialogImageUrl"
+          alt="Preview Image"
+          style="width: 100%; height: 100%"
+        />
       </el-dialog>
     </el-form-item>
     <el-form-item label="SPU銷售屬性">
@@ -84,8 +89,11 @@ import {
   reqAllSaleAttr,
 } from '@/api/product/spu'
 import { TradeMark } from '@/api/product/trademark/type.ts'
+import { ElMessage } from 'element-plus'
 
 let $emit = defineEmits(['changeScene'])
+let dialogVisible = ref<boolean>(false)
+let dialogImageUrl = ref<string>('')
 
 const cancel = () => {
   $emit('changeScene', 0)
@@ -116,7 +124,12 @@ const initHasSpuData = async (spu: SpuData) => {
   }
   let resultSpuImageList: SpuHasImg = await reqSpuImageList(spu.id as number)
   if (resultSpuImageList.code === 200) {
-    spuImageList.value = resultSpuImageList.data
+    spuImageList.value = resultSpuImageList.data.map((item) => {
+      return {
+        name: item.imgName,
+        url: item.imgUrl,
+      }
+    })
   }
   let resultSpuHasSaleAttr: SaleAttrResponseData = await reqSpuHasSaleAttr(
     spu.id as number,
@@ -127,6 +140,35 @@ const initHasSpuData = async (spu: SpuData) => {
   let resultAllSaleAttr: HasSaleAttrResponseData = await reqAllSaleAttr()
   if (resultAllSaleAttr.code === 200) {
     allSaleAttr.value = resultAllSaleAttr.data
+  }
+}
+
+const handlePictureCardPreview = (file: any) => {
+  dialogImageUrl.value = file.url
+  dialogVisible.value = true
+}
+
+const handleUpload = (file: any) => {
+  if (
+    file.type == 'image/png' ||
+    file.type == 'image/jpeg' ||
+    file.type == 'image/gif'
+  ) {
+    if (file.size / 1024 / 1024 < 3) {
+      return true
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '上傳檔案務必小於3M',
+      })
+      return false
+    }
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '上傳檔案務必PNG|JPG|GIF',
+    })
+    return false
   }
 }
 

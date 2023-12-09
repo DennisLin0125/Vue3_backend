@@ -127,6 +127,7 @@ const updateSpu = (row: SpuData) => {
 // 自訂義事件回調
 const changeScene = (num: number) => {
   scene.value = num
+  getHasSpu()
 }
 </script>
 

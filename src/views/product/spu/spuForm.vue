@@ -66,7 +66,7 @@
         <el-table-column label="序號" type="index" width="80" align="center" />
         <el-table-column prop="saleAttrName" label="屬性名" width="120" />
         <el-table-column label="屬性值" width="width">
-          <template v-slot="{ row }">
+          <template v-slot="{ row, $index }">
             <el-tag
               v-for="tag in row.spuSaleAttrValueList"
               :key="tag.id"
@@ -74,6 +74,7 @@
               closable
               :type="tag.type"
               style="margin: 0 5px"
+              @close="row.spuSaleAttrValueList.splice($index, 1)"
             >
               {{ tag.saleAttrValueName }}
             </el-tag>
@@ -107,7 +108,9 @@
       </el-table>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary">保存</el-button>
+      <el-button :disabled="saleAttr.length <= 0" type="primary" @click="save">
+        保存
+      </el-button>
       <el-button @click="cancel">取消</el-button>
     </el-form-item>
   </el-form>
@@ -137,6 +140,7 @@ import {
   reqSpuImageList,
   reqSpuHasSaleAttr,
   reqAllSaleAttr,
+  reqAddOrUpdateSpu,
 } from '@/api/product/spu'
 import { TradeMark } from '@/api/product/trademark/type.ts'
 import { ElMessage } from 'element-plus'
@@ -293,6 +297,37 @@ const toLook = (row: SaleAttr) => {
   row.spuSaleAttrValueList.push(newSaleAttrValue)
   //切換為檢視模式
   row.flag = false
+}
+
+//儲存按鈕的回呼
+const save = async () => {
+  //整理參數
+  //發送請求:新增SPU|更新已有的SPU
+  //成功
+  //失敗
+  //1:照片牆的數據
+  SpuParams.value.spuImageList = spuImageList.value.map((item: any) => {
+    return {
+      imgName: item.name, //圖片的名字
+      imgUrl: (item.response && item.response.data) || item.url,
+    }
+  })
+  //2:整理銷售屬性的數據
+  SpuParams.value.spuSaleAttrList = saleAttr.value
+  let result = await reqAddOrUpdateSpu(SpuParams.value)
+  if (result.code == 200) {
+    ElMessage({
+      type: 'success',
+      message: SpuParams.value.id ? '更新成功' : '新增成功',
+    })
+    //通知父元件切換場景為0
+    $emit('changeScene', 0)
+  } else {
+    ElMessage({
+      type: 'success',
+      message: SpuParams.value.id ? '更新成功' : '新增成功',
+    })
+  }
 }
 
 defineExpose({

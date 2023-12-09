@@ -66,7 +66,7 @@
         <el-table-column label="序號" type="index" width="80" align="center" />
         <el-table-column prop="saleAttrName" label="屬性名" width="120" />
         <el-table-column label="屬性值" width="width">
-          <template v-slot="{ row, $index }">
+          <template v-slot="{ row }">
             <el-tag
               v-for="tag in row.spuSaleAttrValueList"
               :key="tag.id"
@@ -77,7 +77,21 @@
             >
               {{ tag.saleAttrValueName }}
             </el-tag>
-            <el-button type="primary" size="small" icon="Plus" />
+            <el-input
+              v-model="row.saleAttrValue"
+              @blur="toLook(row)"
+              v-if="row.flag === true"
+              placeholder="請輸入屬性值"
+              size="small"
+              style="width: 120px"
+            ></el-input>
+            <el-button
+              @click="toEdit(row)"
+              v-else
+              type="primary"
+              size="small"
+              icon="Plus"
+            />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120">
@@ -116,6 +130,7 @@ import type {
   SpuImg,
   SaleAttr,
   HasSaleAttr,
+  SaleAttrValue,
 } from '@/api/product/spu/type.ts'
 import {
   reqAllTradeMark,
@@ -235,6 +250,49 @@ const addSaleAttr = () => {
   saleAttr.value.push(newSaleAttr)
   //清空收集的數據
   saleAttrIdAndValueName.value = ''
+}
+
+//屬性值按鈕的點擊事件
+const toEdit = (row: SaleAttr) => {
+  //點選按鈕的時候,input元件不就不出來->編輯模式
+  row.flag = true
+  row.saleAttrValue = ''
+}
+//表單元素失卻焦點的事件回調
+const toLook = (row: SaleAttr) => {
+  //整理收集的屬性的ID與屬性值的名字
+  const { baseSaleAttrId, saleAttrValue } = row
+  //整理成伺服器需要的屬性值形式
+  let newSaleAttrValue: SaleAttrValue = {
+    baseSaleAttrId,
+    saleAttrValueName: saleAttrValue as string,
+  }
+
+  //非法狀況判斷
+  if ((saleAttrValue as string).trim() == '') {
+    ElMessage({
+      type: 'error',
+      message: '屬性值不能為空的',
+    })
+    return
+  }
+  //判斷屬性值是否在數組當中存在
+  let repeat = row.spuSaleAttrValueList.find((item) => {
+    return item.saleAttrValueName == saleAttrValue
+  })
+
+  if (repeat) {
+    ElMessage({
+      type: 'error',
+      message: '屬性值重複',
+    })
+    return
+  }
+
+  //追加新的屬性值對象
+  row.spuSaleAttrValueList.push(newSaleAttrValue)
+  //切換為檢視模式
+  row.flag = false
 }
 
 defineExpose({

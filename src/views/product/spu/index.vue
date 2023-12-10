@@ -29,7 +29,7 @@
           <el-table-column label="操作">
             <template v-slot="{ row, $index }">
               <el-button
-                @click="addSku"
+                @click="addSku(row)"
                 type="primary"
                 icon="Plus"
                 title="添加SKU"
@@ -91,6 +91,7 @@ const total = ref<number>(20)
 const records = ref<Records>([])
 // 獲取子組件實例
 let spuForm = ref<any>()
+let skuForm = ref<any>()
 
 // 監聽三級分類數據
 watch(
@@ -140,8 +141,10 @@ const changeScene = (obj: any) => {
   }
 }
 
-const addSku = () => {
+const addSku = (row: SpuData) => {
   scene.value = 2
+  const { c1Id, c2Id } = categoryStore
+  skuForm.value.initSkuData(c1Id, c2Id, row)
 }
 </script>
 

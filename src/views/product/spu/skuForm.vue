@@ -14,27 +14,51 @@
     </el-form-item>
     <el-form-item label="平台屬性">
       <el-form inline>
-        <el-form-item label="手機一級">
+        <el-form-item
+          v-for="item in attrArr"
+          :key="item.id"
+          :label="item.attrName"
+        >
           <el-select placeholder="請選擇">
-            <el-option>11</el-option>
+            <el-option
+              v-for="item2 in item.attrValueList"
+              :key="item2.id"
+              :label="item2.valueName"
+            />
           </el-select>
         </el-form-item>
       </el-form>
     </el-form-item>
     <el-form-item label="銷售屬性">
       <el-form inline>
-        <el-form-item label="顏色">
+        <el-form-item
+          v-for="item in saleArr"
+          :key="item.id"
+          :label="item.saleAttrName"
+        >
           <el-select placeholder="請選擇">
-            <el-option>11</el-option>
+            <el-option
+              v-for="item2 in item.spuSaleAttrValueList"
+              :key="item2.id"
+              :label="item2.saleAttrValueName"
+            />
           </el-select>
         </el-form-item>
       </el-form>
     </el-form-item>
     <el-form-item label="圖片名稱">
-      <el-table border>
+      <el-table border :data="imgArr">
         <el-table-column type="selection" width="80" align="center" />
-        <el-table-column label="圖片" />
-        <el-table-column label="名稱" />
+        <el-table-column label="圖片">
+          <template v-slot="{ row, $index }">
+            <img
+              :src="row.imgUrl"
+              alt="logo"
+              style="width: 80px; height: 80px"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="名稱" prop="imgName" />
         <el-table-column label="操作">
           <template v-slot="{ row, $index }">
             <el-button type="warning">設置默認</el-button>
@@ -56,6 +80,15 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { reqAttr } from '@/api/product/attr'
+import { reqSpuImageList, reqSpuHasSaleAttr } from '@/api/product/spu'
+import type { SpuData } from '@/api/product/spu/type.ts'
+
+import { ref } from 'vue'
+let attrArr = ref<any>([])
+let saleArr = ref<any>([])
+let imgArr = ref<any>([])
+
 let $emit = defineEmits(['changeScene'])
 
 const cancel = () => {
@@ -64,6 +97,24 @@ const cancel = () => {
     params: 'update',
   })
 }
+
+const initSkuData = async (
+  c1Id: number | string,
+  c2Id: number | string,
+  spu: SpuData,
+) => {
+  let result: any = await reqAttr(c1Id, c2Id, spu.category3Id)
+  let result1: any = await reqSpuHasSaleAttr(spu.id as number)
+  let result2: any = await reqSpuImageList(spu.id as number)
+
+  attrArr.value = result.data
+  saleArr.value = result1.data
+  imgArr.value = result2.data
+}
+
+defineExpose({
+  initSkuData,
+})
 </script>
 
 <style scoped lang="scss"></style>

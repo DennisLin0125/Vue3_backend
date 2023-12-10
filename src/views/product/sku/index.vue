@@ -40,7 +40,15 @@
             size="small"
             icon="Info-filled"
           />
-          <el-button type="danger" size="small" icon="Delete" />
+          <el-popconfirm
+            @confirm="rmvSku(row)"
+            :title="`確定要刪除 ${row.skuName} ?`"
+            width="200px"
+          >
+            <template #reference>
+              <el-button type="danger" size="small" icon="Delete" />
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -131,6 +139,7 @@ import {
   reqCancelSale,
   reqSkuInfo,
   reqSkuList,
+  reqRemoveSku,
 } from '@/api/product/sku'
 import type {
   SkuResponseData,
@@ -209,6 +218,22 @@ const findSku = async (row: SkuData) => {
   let result: SkuInfoData = await reqSkuInfo(row.id!)
   if (result.code === 200) {
     skuInfo.value = result.data
+  }
+}
+
+const rmvSku = async (row: SkuData) => {
+  let result: any = await reqRemoveSku(row.id!)
+  if (result.code === 200) {
+    await getHasSku(skuArr.value.length > 1 ? page.value : page.value - 1)
+    ElMessage({
+      type: 'success',
+      message: '刪除成功',
+    })
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '刪除失敗',
+    })
   }
 }
 </script>

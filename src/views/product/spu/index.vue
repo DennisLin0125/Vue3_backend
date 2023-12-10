@@ -46,7 +46,15 @@
                 icon="View"
                 title="查看SKU"
               />
-              <el-button type="danger" icon="Delete" title="刪除SKU" />
+              <el-popconfirm
+                @confirm="deleteSpu(row)"
+                width="200px"
+                :title="`確定刪除 ${row.spuName} ?`"
+              >
+                <template #reference>
+                  <el-button type="danger" icon="Delete" title="刪除SPU" />
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -93,7 +101,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 import type {
   HasSpuResponseData,
   Records,
@@ -102,10 +110,11 @@ import type {
   SkuData,
 } from '@/api/product/spu/type.ts'
 import useCategoryStore from '@/store/modules/category.ts'
-import { reqHasSpu, reqSkuList } from '@/api/product/spu'
+import { reqHasSpu, reqSkuList, reqRemoveSpu } from '@/api/product/spu'
 // 引入子組件
 import SpuForm from '@/views/product/spu/spuForm.vue'
 import SkuForm from '@/views/product/spu/skuForm.vue'
+import { ElMessage } from 'element-plus'
 let categoryStore = useCategoryStore()
 //場景的數據
 let scene = ref<number>(0)
@@ -119,6 +128,11 @@ let skuForm = ref<any>()
 
 let skuArr = ref<SkuData[]>([])
 let show = ref<boolean>(false)
+
+// 清除數據
+onBeforeUnmount(() => {
+  categoryStore.$reset()
+})
 // 監聽三級分類數據
 watch(
   () => categoryStore.c3Id,
@@ -174,10 +188,26 @@ const addSku = (row: SpuData) => {
 }
 
 const findSku = async (row: SpuData) => {
-  let result = await reqSkuList(row.id!)
+  let result: any = await reqSkuList(row.id!)
   if (result.code === 200) {
     show.value = true
     skuArr.value = result.data
+  }
+}
+
+const deleteSpu = async (row: SpuData) => {
+  let result: any = await reqRemoveSpu(row.id!)
+  if (result.code === 200) {
+    ElMessage({
+      type: 'success',
+      message: '刪除成功',
+    })
+    await getHasSpu(records.value.length > 1 ? page.value : page.value - 1)
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '刪除失敗',
+    })
   }
 }
 </script>

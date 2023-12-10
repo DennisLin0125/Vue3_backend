@@ -27,8 +27,13 @@
       <el-table-column prop="price" label="價格(元)" width="150px" />
       <el-table-column label="操作" fixed="right" width="width">
         <template v-slot="{ row, $index }">
-          <el-button type="info" size="small" icon="Top" />
-          <el-button type="primary" size="small" icon="Edit" />
+          <el-button
+            @click="updateSale(row)"
+            type="info"
+            size="small"
+            :icon="row.isSale == 1 ? 'Bottom' : 'Top'"
+          />
+          <el-button @click="editSku" type="primary" size="small" icon="Edit" />
           <el-button type="info" size="small" icon="Info-filled" />
           <el-button type="danger" size="small" icon="Delete" />
         </template>
@@ -56,8 +61,9 @@ export default {
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { reqSkuList } from '@/api/product/sku'
+import { reqSkuList, reqSaleSku, reqCancelSale } from '@/api/product/sku'
 import type { SkuResponseData, SkuData } from '@/api/product/sku/type.ts'
+import { ElMessage } from 'element-plus'
 
 let page = ref<number>(1)
 let size = ref<number>(10)
@@ -79,6 +85,47 @@ const getHasSku = async (pager = 1) => {
 
 const handleSizeChange = () => {
   getHasSku()
+}
+
+const updateSale = async (row: SkuData) => {
+  if (row.isSale == 1) {
+    let result = await reqCancelSale(row.id!)
+    if (result.code === 200) {
+      row.isSale = 0
+      await getHasSku()
+      ElMessage({
+        type: 'success',
+        message: '下架成功',
+      })
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '下架失敗',
+      })
+    }
+  } else {
+    let result = await reqSaleSku(row.id!)
+    if (result.code === 200) {
+      row.isSale = 1
+      await getHasSku()
+      ElMessage({
+        type: 'success',
+        message: '上架成功',
+      })
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '上架失敗',
+      })
+    }
+  }
+}
+
+const editSku = () => {
+  ElMessage({
+    type: 'success',
+    message: '目前開發中',
+  })
 }
 </script>
 

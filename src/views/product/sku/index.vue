@@ -34,7 +34,12 @@
             :icon="row.isSale == 1 ? 'Bottom' : 'Top'"
           />
           <el-button @click="editSku" type="primary" size="small" icon="Edit" />
-          <el-button type="info" size="small" icon="Info-filled" />
+          <el-button
+            @click="findSku(row)"
+            type="info"
+            size="small"
+            icon="Info-filled"
+          />
           <el-button type="danger" size="small" icon="Delete" />
         </template>
       </el-table-column>
@@ -50,6 +55,47 @@
       @current-change="getHasSku"
       style="margin: 10px 0"
     />
+    <el-drawer v-model="drawer">
+      <template #header>
+        <h4>查看商品詳情</h4>
+      </template>
+      <template #default>
+        <el-row style="margin: 5px 0">
+          <el-col :span="6">名稱</el-col>
+          <el-col :span="18">華韋</el-col>
+        </el-row>
+        <el-row style="margin: 5px 0">
+          <el-col :span="6">描述</el-col>
+          <el-col :span="18">華韋</el-col>
+        </el-row>
+        <el-row style="margin: 5px 0">
+          <el-col :span="6">價格</el-col>
+          <el-col :span="18">華韋</el-col>
+        </el-row>
+        <el-row style="margin: 5px 0">
+          <el-col :span="6">平台屬性</el-col>
+          <el-col :span="18">
+            <el-tag style="margin: 5px"></el-tag>
+          </el-col>
+        </el-row>
+        <el-row style="margin: 5px 0">
+          <el-col :span="6">銷售屬性</el-col>
+          <el-col :span="18">
+            <el-tag style="margin: 5px"></el-tag>
+          </el-col>
+        </el-row>
+        <el-row style="margin: 5px 0">
+          <el-col :span="6">商品圖片</el-col>
+          <el-col :span="18">
+            <el-carousel :interval="4000" type="card" height="200px">
+              <el-carousel-item v-for="item in 6" :key="item">
+                <h3 text="2xl" justify="center">{{ item }}</h3>
+              </el-carousel-item>
+            </el-carousel>
+          </el-col>
+        </el-row>
+      </template>
+    </el-drawer>
   </el-card>
 </template>
 
@@ -69,6 +115,7 @@ let page = ref<number>(1)
 let size = ref<number>(10)
 let total = ref<number>(0)
 let skuArr = ref<SkuData[]>([])
+let drawer = ref<boolean>(false)
 
 onMounted(() => {
   getHasSku()
@@ -127,6 +174,28 @@ const editSku = () => {
     message: '目前開發中',
   })
 }
+
+const findSku = (row) => {
+  drawer.value = true
+}
 </script>
+
+<style scoped>
+.el-carousel__item h3 {
+  margin: 0;
+  line-height: 200px;
+  color: #475669;
+  text-align: center;
+  opacity: 0.75;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+</style>
 
 <style scoped lang="scss"></style>

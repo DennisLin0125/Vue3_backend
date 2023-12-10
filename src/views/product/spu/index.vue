@@ -40,7 +40,12 @@
                 icon="Edit"
                 title="修改SPU"
               />
-              <el-button type="info" icon="View" title="查看SKU" />
+              <el-button
+                @click="findSku(row)"
+                type="info"
+                icon="View"
+                title="查看SKU"
+              />
               <el-button type="danger" icon="Delete" title="刪除SKU" />
             </template>
           </el-table-column>
@@ -60,6 +65,23 @@
       <SpuForm ref="spuForm" v-show="scene == 1" @changeScene="changeScene" />
       <!--      添加Sku-->
       <SkuForm ref="skuForm" v-show="scene == 2" @changeScene="changeScene" />
+      <!--      dialog對話框-->
+      <el-dialog v-model="show" title="SKU列表">
+        <el-table border :data="skuArr">
+          <el-table-column label="SKU名字" prop="skuName" />
+          <el-table-column label="SKU價格" prop="price" />
+          <el-table-column label="SKU重量" prop="weight" />
+          <el-table-column>
+            <template v-slot="{ row, $index }">
+              <img
+                :src="row.skuDefaultImg"
+                alt=""
+                style="width: 80px; height: 80px"
+              />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -76,9 +98,11 @@ import type {
   HasSpuResponseData,
   Records,
   SpuData,
+  SkuInfoData,
+  SkuData,
 } from '@/api/product/spu/type.ts'
 import useCategoryStore from '@/store/modules/category.ts'
-import { reqHasSpu } from '@/api/product/spu'
+import { reqHasSpu, reqSkuList } from '@/api/product/spu'
 // 引入子組件
 import SpuForm from '@/views/product/spu/spuForm.vue'
 import SkuForm from '@/views/product/spu/skuForm.vue'
@@ -93,6 +117,8 @@ const records = ref<Records>([])
 let spuForm = ref<any>()
 let skuForm = ref<any>()
 
+let skuArr = ref<SkuData[]>([])
+let show = ref<boolean>(false)
 // 監聽三級分類數據
 watch(
   () => categoryStore.c3Id,
@@ -145,6 +171,14 @@ const addSku = (row: SpuData) => {
   scene.value = 2
   const { c1Id, c2Id } = categoryStore
   skuForm.value.initSkuData(c1Id, c2Id, row)
+}
+
+const findSku = async (row: SpuData) => {
+  let result = await reqSkuList(row.id!)
+  if (result.code === 200) {
+    show.value = true
+    skuArr.value = result.data
+  }
 }
 </script>
 

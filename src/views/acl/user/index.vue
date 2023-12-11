@@ -13,20 +13,50 @@
   <el-card style="margin: 10px 0">
     <el-button type="primary">添加</el-button>
     <el-button type="danger">批量刪除</el-button>
-    <el-table border style="margin: 10px 0">
+    <el-table border style="margin: 10px 0" :data="userArr">
       <el-table-column type="selection" width="80" align="center" />
       <el-table-column label="#" type="index" width="80" align="center" />
-      <el-table-column label="ID" align="center" />
-      <el-table-column label="用戶名字" align="center" />
-      <el-table-column label="用戶名稱" align="center" />
-      <el-table-column label="用戶角色" align="center" />
-      <el-table-column label="創建時間" align="center" />
-      <el-table-column label="更新時間" align="center" />
-      <el-table-column label="操作" width="260" align="center">
+      <el-table-column prop="id" label="ID" align="center" />
+      <el-table-column
+        prop="username"
+        label="用戶名字"
+        align="center"
+        width="100"
+        show-overflow-tooltip="..."
+      />
+      <el-table-column
+        prop="name"
+        label="用戶名稱"
+        align="center"
+        width="200"
+        show-overflow-tooltip="..."
+      />
+      <el-table-column
+        prop="roleName"
+        label="用戶角色"
+        align="center"
+        width="200"
+        show-overflow-tooltip="..."
+      />
+      <el-table-column
+        prop="createTime"
+        label="創建時間"
+        align="center"
+        width="200"
+      />
+      <el-table-column
+        prop="updateTime"
+        label="更新時間"
+        align="center"
+        width="200"
+      />
+      <el-table-column label="操作" width="300" align="center" fixed="right">
         <template v-slot="{ row, $index }">
-          <el-button type="primary" icon="">分配角色</el-button>
-          <el-button type="info" icon="Edit">編輯</el-button>
-          <el-button type="danger" icon="Delete">刪除</el-button>
+          <el-button type="primary" icon="User" size="small">
+            分配角色
+          </el-button>
+          <el-button type="info" icon="Edit" size="small">編輯</el-button>
+          <el-button type="danger" icon="Delete" size="small">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -34,12 +64,12 @@
   <el-pagination
     v-model:current-page="page"
     v-model:page-size="size"
-    :page-sizes="[5, 7, 9, 11]"
+    :page-sizes="[3, 5, 10]"
     background
     layout="prev, pager, next, jumper,->, sizes,total"
     :total="total"
     @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
+    @current-change="getHasUser"
   />
 </template>
 
@@ -50,10 +80,36 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { reqUserInfo } from '@/api/acl/user'
+import type { UserResponseData, Records } from '@/api/acl/user/type.ts'
+
 let page = ref<number>(1)
 let size = ref<number>(5)
 let total = ref<number>(10)
+let keyword = ref<string>('')
+let userArr = ref<Records>([])
+
+onMounted(() => {
+  getHasUser()
+})
+
+const getHasUser = async (pager = 1) => {
+  page.value = pager
+  let result: UserResponseData = await reqUserInfo(
+    page.value,
+    size.value,
+    keyword.value,
+  )
+  if (result.code == 200) {
+    total.value = result.data.total
+    userArr.value = result.data.records
+  }
+}
+
+const handleSizeChange = () => {
+  getHasUser()
+}
 </script>
 
 <style scoped lang="scss">

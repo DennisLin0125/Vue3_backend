@@ -86,20 +86,20 @@
     <template #default>
       <el-form>
         <el-form-item label="用戶姓名">
-          <el-input placeholder="請輸入名字" />
+          <el-input placeholder="請輸入名字" v-model="userParams.username" />
         </el-form-item>
         <el-form-item label="用戶暱稱">
-          <el-input placeholder="請輸入暱稱" />
+          <el-input placeholder="請輸入暱稱" v-model="userParams.name" />
         </el-form-item>
         <el-form-item label="用戶密碼">
-          <el-input placeholder="請輸入密碼" />
+          <el-input placeholder="請輸入密碼" v-model="userParams.password" />
         </el-form-item>
       </el-form>
     </template>
     <template #footer>
       <div style="flex: auto">
-        <el-button>取消</el-button>
-        <el-button type="primary">確定</el-button>
+        <el-button @click="cancel">取消</el-button>
+        <el-button type="primary" @click="save">確定</el-button>
       </div>
     </template>
   </el-drawer>
@@ -112,9 +112,10 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { reqUserInfo } from '@/api/acl/user'
+import { ref, onMounted, reactive } from 'vue'
+import { reqAddOrUpdateUser, reqUserInfo } from '@/api/acl/user'
 import type { UserResponseData, Records, User } from '@/api/acl/user/type.ts'
+import { ElMessage } from 'element-plus'
 
 let page = ref<number>(1)
 let size = ref<number>(5)
@@ -122,6 +123,11 @@ let total = ref<number>(10)
 let keyword = ref<string>('')
 let userArr = ref<Records>([])
 let drawer = ref<boolean>(false)
+let userParams = reactive<User>({
+  username: '',
+  name: '',
+  password: '',
+})
 
 onMounted(() => {
   getHasUser()
@@ -146,10 +152,38 @@ const handleSizeChange = () => {
 
 const addUser = () => {
   drawer.value = true
+  // 清空數據
+  Object.assign(userParams, {
+    username: '',
+    name: '',
+    password: '',
+  })
 }
 
 const updateUser = (row: User) => {
   drawer.value = true
+}
+
+const save = async () => {
+  let result: any = await reqAddOrUpdateUser(userParams)
+  if (result.code === 200) {
+    drawer.value = false
+    await getHasUser()
+    ElMessage({
+      type: 'success',
+      message: userParams.id ? '更新成功' : '添加成功',
+    })
+  } else {
+    drawer.value = false
+    ElMessage({
+      type: 'error',
+      message: userParams.id ? '更新失敗' : '添加失敗',
+    })
+  }
+}
+
+const cancel = () => {
+  drawer.value = false
 }
 </script>
 

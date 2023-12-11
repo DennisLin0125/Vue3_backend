@@ -81,7 +81,7 @@
   <!--  抽屜-->
   <el-drawer v-model="drawer">
     <template #header>
-      <h4>添加用戶</h4>
+      <h4>{{ userParams.id ? '更新用戶' : '添加用戶' }}</h4>
     </template>
     <template #default>
       <el-form :model="userParams" :rules="rules" ref="formRef">
@@ -91,7 +91,7 @@
         <el-form-item label="用戶暱稱" prop="name">
           <el-input placeholder="請輸入暱稱" v-model="userParams.name" />
         </el-form-item>
-        <el-form-item label="用戶密碼" prop="password">
+        <el-form-item label="用戶密碼" prop="password" v-if="!userParams.id">
           <el-input placeholder="請輸入密碼" v-model="userParams.password" />
         </el-form-item>
       </el-form>
@@ -156,10 +156,12 @@ const addUser = () => {
   drawer.value = true
   // 清空數據
   Object.assign(userParams, {
+    id: 0,
     username: '',
     name: '',
     password: '',
   })
+  // 清除上一次錯誤訊息
   nextTick(() => {
     formRef.value.clearValidate('username')
     formRef.value.clearValidate('name')
@@ -169,6 +171,13 @@ const addUser = () => {
 
 const updateUser = (row: User) => {
   drawer.value = true
+  // 蒐集已有的數據
+  Object.assign(userParams, row)
+  // 清除上一次錯誤訊息
+  nextTick(() => {
+    formRef.value.clearValidate('username')
+    formRef.value.clearValidate('name')
+  })
 }
 
 const save = async () => {
@@ -178,11 +187,13 @@ const save = async () => {
   let result: any = await reqAddOrUpdateUser(userParams)
   if (result.code === 200) {
     drawer.value = false
-    await getHasUser()
+    await getHasUser(userParams.id ? page.value : 1)
     ElMessage({
       type: 'success',
       message: userParams.id ? '更新成功' : '添加成功',
     })
+    //   瀏覽器自動刷新
+    window.location.reload()
   } else {
     drawer.value = false
     ElMessage({

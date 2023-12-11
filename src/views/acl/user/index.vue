@@ -84,14 +84,14 @@
       <h4>添加用戶</h4>
     </template>
     <template #default>
-      <el-form>
-        <el-form-item label="用戶姓名">
+      <el-form :model="userParams" :rules="rules" ref="formRef">
+        <el-form-item label="用戶姓名" prop="username">
           <el-input placeholder="請輸入名字" v-model="userParams.username" />
         </el-form-item>
-        <el-form-item label="用戶暱稱">
+        <el-form-item label="用戶暱稱" prop="name">
           <el-input placeholder="請輸入暱稱" v-model="userParams.name" />
         </el-form-item>
-        <el-form-item label="用戶密碼">
+        <el-form-item label="用戶密碼" prop="password">
           <el-input placeholder="請輸入密碼" v-model="userParams.password" />
         </el-form-item>
       </el-form>
@@ -112,7 +112,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import { reqAddOrUpdateUser, reqUserInfo } from '@/api/acl/user'
 import type { UserResponseData, Records, User } from '@/api/acl/user/type.ts'
 import { ElMessage } from 'element-plus'
@@ -128,6 +128,8 @@ let userParams = reactive<User>({
   name: '',
   password: '',
 })
+
+let formRef = ref<any>()
 
 onMounted(() => {
   getHasUser()
@@ -158,6 +160,11 @@ const addUser = () => {
     name: '',
     password: '',
   })
+  nextTick(() => {
+    formRef.value.clearValidate('username')
+    formRef.value.clearValidate('name')
+    formRef.value.clearValidate('password')
+  })
 }
 
 const updateUser = (row: User) => {
@@ -165,6 +172,9 @@ const updateUser = (row: User) => {
 }
 
 const save = async () => {
+  // 等待表單驗證是否成功
+  await formRef.value.validate()
+
   let result: any = await reqAddOrUpdateUser(userParams)
   if (result.code === 200) {
     drawer.value = false
@@ -180,6 +190,35 @@ const save = async () => {
       message: userParams.id ? '更新失敗' : '添加失敗',
     })
   }
+}
+
+const validatorUserName = (rule: any, value: any, callBack: any) => {
+  if (value.trim().length >= 5) {
+    callBack()
+  } else {
+    callBack(new Error('用戶名稱至少5位'))
+  }
+}
+
+const validatorName = (rule: any, value: any, callBack: any) => {
+  if (value.trim().length >= 5) {
+    callBack()
+  } else {
+    callBack(new Error('用戶暱稱至少5位'))
+  }
+}
+
+const validatorPassword = (rule: any, value: any, callBack: any) => {
+  if (value.trim().length >= 6) {
+    callBack()
+  } else {
+    callBack(new Error('用戶密碼至少6位'))
+  }
+}
+const rules = {
+  username: [{ required: true, trigger: 'blur', validator: validatorUserName }],
+  name: [{ required: true, trigger: 'blur', validator: validatorName }],
+  password: [{ required: true, trigger: 'blur', validator: validatorPassword }],
 }
 
 const cancel = () => {

@@ -52,7 +52,12 @@
       />
       <el-table-column label="操作" width="300" align="center" fixed="right">
         <template v-slot="{ row, $index }">
-          <el-button type="primary" icon="User" size="small">
+          <el-button
+            @click="setRole(row)"
+            type="primary"
+            icon="User"
+            size="small"
+          >
             分配角色
           </el-button>
           <el-button
@@ -78,7 +83,7 @@
       @current-change="getHasUser"
     />
   </el-card>
-  <!--  抽屜-->
+  <!--  抽屜 用於添加新用戶-->
   <el-drawer v-model="drawer">
     <template #header>
       <h4>{{ userParams.id ? '更新用戶' : '添加用戶' }}</h4>
@@ -103,6 +108,44 @@
       </div>
     </template>
   </el-drawer>
+  <!--  抽屜 用於分配角色-->
+  <el-drawer v-model="drawer1">
+    <template #header>
+      <h4>分配角色</h4>
+    </template>
+    <template #default>
+      <el-form>
+        <el-form-item label="用戶姓名">
+          <el-input v-model="userParams.username" disabled />
+        </el-form-item>
+        <el-form-item label="職位列表">
+          <el-checkbox
+            v-model="checkedAll"
+            :indeterminate="isIndeterminate"
+            @change="handleCheckAllChange"
+          >
+            全選
+          </el-checkbox>
+          <!--          顯示職位-->
+          <el-checkbox-group v-model="userRole" @change="handleCheckedChange">
+            <el-checkbox
+              v-for="(role, index) in allRole"
+              :key="index"
+              :label="role"
+            >
+              {{ role }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template #footer>
+      <div style="flex: auto">
+        <el-button>取消</el-button>
+        <el-button type="primary">確定</el-button>
+      </div>
+    </template>
+  </el-drawer>
 </template>
 
 <script lang="ts">
@@ -123,6 +166,7 @@ let total = ref<number>(10)
 let keyword = ref<string>('')
 let userArr = ref<Records>([])
 let drawer = ref<boolean>(false)
+let drawer1 = ref<boolean>(false)
 let userParams = reactive<User>({
   username: '',
   name: '',
@@ -187,7 +231,7 @@ const save = async () => {
   let result: any = await reqAddOrUpdateUser(userParams)
   if (result.code === 200) {
     drawer.value = false
-    await getHasUser(userParams.id ? page.value : 1)
+    // await getHasUser(userParams.id ? page.value : 1)
     ElMessage({
       type: 'success',
       message: userParams.id ? '更新成功' : '添加成功',
@@ -234,6 +278,28 @@ const rules = {
 
 const cancel = () => {
   drawer.value = false
+}
+
+const setRole = (row: User) => {
+  drawer1.value = true
+  Object.assign(userParams, row)
+}
+
+let checkedAll = ref<boolean>(false)
+let isIndeterminate = ref<boolean>(true)
+let allRole = ref(['銷售', '前端', '後端', '財務', 'Boss'])
+let userRole = ref(['Boss'])
+
+const handleCheckAllChange = (val: boolean) => {
+  userRole.value = val ? allRole.value : []
+  isIndeterminate.value = false
+}
+
+const handleCheckedChange = (value: string[]) => {
+  const checkedCount = value.length
+  checkedAll.value = checkedCount === allRole.value.length
+  isIndeterminate.value =
+    checkedCount > 0 && checkedCount < allRole.value.length
 }
 </script>
 

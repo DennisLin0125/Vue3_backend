@@ -12,8 +12,19 @@
   </el-card>
   <el-card style="margin: 10px 0">
     <el-button type="primary" @click="addUser">添加用戶</el-button>
-    <el-button type="danger">批量刪除</el-button>
-    <el-table border style="margin: 10px 0" :data="userArr">
+    <el-button
+      type="danger"
+      :disabled="!selectIdArr.length"
+      @click="deleteSelectUser"
+    >
+      批量刪除
+    </el-button>
+    <el-table
+      border
+      style="margin: 10px 0"
+      :data="userArr"
+      @selection-change="selectChange"
+    >
       <el-table-column type="selection" width="80" align="center" />
       <el-table-column label="#" type="index" width="80" align="center" />
       <el-table-column prop="id" label="ID" align="center" />
@@ -68,7 +79,17 @@
           >
             編輯
           </el-button>
-          <el-button type="danger" icon="Delete" size="small">刪除</el-button>
+          <el-popconfirm
+            :title="`確定要刪除 ${row.username} ?`"
+            width="250"
+            @confirm="deleteUser(row.id)"
+          >
+            <template #reference>
+              <el-button type="danger" icon="Delete" size="small">
+                刪除
+              </el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -161,6 +182,8 @@ import {
   reqUserInfo,
   reqAllRole,
   reqSetUserRole,
+  reqRemoveUser,
+  reqSelectUser,
 } from '@/api/acl/user'
 import type {
   UserResponseData,
@@ -331,6 +354,33 @@ const confirmRole = async () => {
     ElMessage({ type: 'success', message: '分配職務成功' })
   } else {
     ElMessage({ type: 'error', message: '分配職務失敗' })
+  }
+}
+
+const deleteUser = async (userId: number) => {
+  let result: any = await reqRemoveUser(userId)
+  if (result.code === 200) {
+    await getHasUser(userArr.value.length > 1 ? page.value : page.value - 1)
+    ElMessage({ type: 'success', message: '刪除成功' })
+  } else {
+    ElMessage({ type: 'error', message: '刪除失敗' })
+  }
+}
+
+let selectIdArr = ref<User[]>([])
+// table複選框勾選的回調
+const selectChange = (value: any) => {
+  selectIdArr.value = value
+}
+
+const deleteSelectUser = async () => {
+  let idList: any = selectIdArr.value.map((item) => item.id)
+  let result: any = await reqSelectUser(idList)
+  if (result.code === 200) {
+    await getHasUser(page.value)
+    ElMessage({ type: 'success', message: '批量刪除成功' })
+  } else {
+    ElMessage({ type: 'error', message: '批量刪除失敗' })
   }
 }
 </script>

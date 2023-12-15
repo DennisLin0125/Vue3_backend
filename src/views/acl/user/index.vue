@@ -133,7 +133,7 @@
               :key="index"
               :label="role"
             >
-              {{ role }}
+              {{ role.roleName }}
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -141,8 +141,8 @@
     </template>
     <template #footer>
       <div style="flex: auto">
-        <el-button>取消</el-button>
-        <el-button type="primary">確定</el-button>
+        <el-button @click="drawer1 = false">取消</el-button>
+        <el-button type="primary" @click="confirmRole">確定</el-button>
       </div>
     </template>
   </el-drawer>
@@ -156,8 +156,20 @@ export default {
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, nextTick } from 'vue'
-import { reqAddOrUpdateUser, reqUserInfo } from '@/api/acl/user'
-import type { UserResponseData, Records, User } from '@/api/acl/user/type.ts'
+import {
+  reqAddOrUpdateUser,
+  reqUserInfo,
+  reqAllRole,
+  reqSetUserRole,
+} from '@/api/acl/user'
+import type {
+  UserResponseData,
+  Records,
+  User,
+  AllRoleResponseData,
+  AllRole,
+  SetRoleData,
+} from '@/api/acl/user/type.ts'
 import { ElMessage } from 'element-plus'
 
 let page = ref<number>(1)
@@ -280,15 +292,20 @@ const cancel = () => {
   drawer.value = false
 }
 
-const setRole = (row: User) => {
-  drawer1.value = true
-  Object.assign(userParams, row)
-}
-
 let checkedAll = ref<boolean>(false)
 let isIndeterminate = ref<boolean>(true)
-let allRole = ref(['銷售', '前端', '後端', '財務', 'Boss'])
-let userRole = ref(['Boss'])
+let allRole = ref<AllRole>([])
+let userRole = ref<AllRole>([])
+
+const setRole = async (row: User) => {
+  Object.assign(userParams, row)
+  let result: AllRoleResponseData = await reqAllRole(userParams.id!)
+  if (result.code === 200) {
+    allRole.value = result.data.allRolesList
+    userRole.value = result.data.assignRoles
+    drawer1.value = true
+  }
+}
 
 const handleCheckAllChange = (val: boolean) => {
   userRole.value = val ? allRole.value : []
@@ -300,6 +317,21 @@ const handleCheckedChange = (value: string[]) => {
   checkedAll.value = checkedCount === allRole.value.length
   isIndeterminate.value =
     checkedCount > 0 && checkedCount < allRole.value.length
+}
+
+const confirmRole = async () => {
+  let data: SetRoleData = {
+    userId: userParams.id!,
+    roleIdList: userRole.value.map((item) => item.id!),
+  }
+  let result: any = await reqSetUserRole(data)
+  if (result.code === 200) {
+    drawer1.value = false
+    await getHasUser(page.value)
+    ElMessage({ type: 'success', message: '分配職務成功' })
+  } else {
+    ElMessage({ type: 'error', message: '分配職務失敗' })
+  }
 }
 </script>
 

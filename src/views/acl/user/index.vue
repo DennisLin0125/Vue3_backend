@@ -2,11 +2,13 @@
   <el-card style="height: 75px">
     <el-form inline class="form">
       <el-form-item label="用戶名:">
-        <el-input placeholder="請輸入用戶名" />
+        <el-input placeholder="請輸入用戶名" v-model="keyword" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">搜索</el-button>
-        <el-button>重置</el-button>
+        <el-button type="primary" :disabled="!keyword" @click="search">
+          搜索
+        </el-button>
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -177,6 +179,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, nextTick } from 'vue'
+import useLayoutSettingStore from '@/store/modules/setting.ts'
 import {
   reqAddOrUpdateUser,
   reqUserInfo,
@@ -382,6 +385,16 @@ const deleteSelectUser = async () => {
   } else {
     ElMessage({ type: 'error', message: '批量刪除失敗' })
   }
+}
+
+const search = () => {
+  getHasUser()
+  keyword.value = ''
+}
+
+let layoutSettingStore = useLayoutSettingStore()
+const reset = () => {
+  layoutSettingStore.reflash = !layoutSettingStore.reflash
 }
 </script>
 

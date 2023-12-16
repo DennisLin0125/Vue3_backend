@@ -61,15 +61,18 @@
     />
   </el-card>
   <!--  添加職位-->
-  <el-dialog v-model="dialogTableVisible" title="添加職位">
-    <el-form>
-      <el-form-item label="職位名稱">
-        <el-input placeholder="請輸入職位名稱" />
+  <el-dialog
+    v-model="dialogTableVisible"
+    :title="roleParams.id ? '更新職位' : '添加職位'"
+  >
+    <el-form :model="roleParams" :rules="rules" ref="form">
+      <el-form-item label="職位名稱" prop="roleName">
+        <el-input placeholder="請輸入職位名稱" v-model="roleParams.roleName" />
       </el-form-item>
     </el-form>
     <template #footer>
       <el-button @click="dialogTableVisible = false">取消</el-button>
-      <el-button type="primary">確定</el-button>
+      <el-button type="primary" @click="save">確定</el-button>
     </template>
   </el-dialog>
 </template>
@@ -81,14 +84,15 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { reqAllRoleList } from '@/api/acl/role'
+import { ref, onMounted, reactive, nextTick } from 'vue'
+import { reqAllRoleList, reqAddOrUpdateRole } from '@/api/acl/role'
 import type {
   RoleResponseData,
   Records,
   RoleData,
 } from '@/api/acl/role/type.ts'
 import useLayoutSettingStore from '@/store/modules/setting.ts'
+import { ElMessage } from 'element-plus'
 
 let page = ref<number>(1)
 let size = ref<number>(3)
@@ -96,7 +100,13 @@ let total = ref<number>(10)
 let keyword = ref<string>('')
 let allRole = ref<Records>([])
 let dialogTableVisible = ref<boolean>(false)
+
+let roleParams = reactive<RoleData>({
+  roleName: '',
+})
+
 let layoutSettingStore = useLayoutSettingStore()
+let form = ref<any>()
 
 onMounted(() => {
   getHasRole()
@@ -130,10 +140,53 @@ const reset = () => {
 
 const addRole = () => {
   dialogTableVisible.value = true
+  // 清空數據
+  Object.assign(roleParams, {
+    roleName: '',
+    id: 0,
+  })
+  nextTick(() => {
+    form.value.clearValidate()
+  })
 }
 
 const updateRole = (row: RoleData) => {
   dialogTableVisible.value = true
+  Object.assign(roleParams, row)
+  nextTick(() => {
+    form.value.clearValidate()
+  })
+}
+
+const validatorRoleName = (rule: any, value: any, callback: any) => {
+  if (value.trim().length > 2) {
+    callback()
+  } else {
+    callback(new Error('字數需大於2位'))
+  }
+}
+
+const rules = {
+  roleName: [{ required: true, trigger: 'blur', validator: validatorRoleName }],
+}
+
+const save = async () => {
+  await form.value.validate()
+  let res: any = await reqAddOrUpdateRole(roleParams)
+  if (res.code === 200) {
+    dialogTableVisible.value = false
+    await getHasRole(roleParams.id ? page.value : 1)
+    ElMessage({
+      type: 'success',
+      message: roleParams.id ? '更新職位成功' : '添加職位成功',
+    })
+  } else {
+    dialogTableVisible.value = false
+    ElMessage({
+      type: 'error',
+      message: roleParams.id ? '更新職位失敗' : '添加職位失敗',
+    })
+  }
 }
 </script>
 

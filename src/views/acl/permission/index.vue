@@ -11,7 +11,7 @@
     <el-table-column label="操作" width="width">
       <template v-slot="{ row, $index }">
         <el-button
-          @click="addPermission"
+          @click="addPermission(row)"
           type="primary"
           icon="Plus"
           :disabled="row.level == 4"
@@ -33,19 +33,22 @@
     </el-table-column>
   </el-table>
   <!--  添加數據-->
-  <el-dialog v-model="dialogVisible" title="添加菜單">
+  <el-dialog
+    v-model="dialogVisible"
+    :title="menuData.id ? '更新菜單' : '添加菜單'"
+  >
     <el-form label-width="80">
       <el-form-item label="名稱">
-        <el-input placeholder="請輸入名稱" />
+        <el-input placeholder="請輸入名稱" v-model="menuData.name" />
       </el-form-item>
       <el-form-item label="權限值">
-        <el-input placeholder="請輸入權限" />
+        <el-input placeholder="請輸入權限" v-model="menuData.code" />
       </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary">確定</el-button>
+        <el-button type="primary" @click="save">確定</el-button>
       </span>
     </template>
   </el-dialog>
@@ -58,16 +61,25 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { reqAllPermisstion } from '@/api/acl/menu'
+import { onMounted, ref, reactive } from 'vue'
+import { reqAllPermisstion, reqAddOrUpdateMenu } from '@/api/acl/menu'
 import type {
   PermisstionList,
   PermisstionResponseData,
   Permisstion,
+  MenuParams,
 } from '@/api/acl/menu/type.ts'
+import { ElMessage } from 'element-plus'
 
 let permissionArr = ref<PermisstionList>([])
 let dialogVisible = ref<boolean>(false)
+let menuData = reactive<MenuParams>({
+  id: 0,
+  name: '',
+  code: '',
+  level: 0,
+  pid: 0,
+})
 
 onMounted(() => {
   getHasPermission()
@@ -80,12 +92,41 @@ const getHasPermission = async () => {
   }
 }
 
-const addPermission = () => {
+const addPermission = (row: Permisstion) => {
+  Object.assign(menuData, {
+    id: 0,
+    name: '',
+    code: '',
+    level: 0,
+    pid: 0,
+  })
   dialogVisible.value = true
+  //   收集
+  menuData.level = row.level + 1
+  menuData.pid = row.id!
 }
 
 const updatePermission = (row: Permisstion) => {
   dialogVisible.value = true
+  Object.assign(menuData, row)
+}
+
+const save = async () => {
+  let res: any = await reqAddOrUpdateMenu(menuData)
+  if (res.code === 200) {
+    await getHasPermission()
+    dialogVisible.value = false
+    ElMessage({
+      type: 'success',
+      message: menuData.id ? '更新成功' : '添加成功',
+    })
+  } else {
+    dialogVisible.value = false
+    ElMessage({
+      type: 'error',
+      message: menuData.id ? '更新失敗' : '添加失敗',
+    })
+  }
 }
 </script>
 

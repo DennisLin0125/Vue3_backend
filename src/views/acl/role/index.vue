@@ -40,7 +40,9 @@
       />
       <el-table-column label="操作" width="width" align="center">
         <template v-slot="{ row, $index }">
-          <el-button type="primary" icon="User">分配權限</el-button>
+          <el-button type="primary" icon="User" @click="setPermission(row)">
+            分配權限
+          </el-button>
           <el-button type="info" icon="Edit" @click="updateRole(row)">
             編輯
           </el-button>
@@ -75,6 +77,29 @@
       <el-button type="primary" @click="save">確定</el-button>
     </template>
   </el-dialog>
+  <!--  分配職位-->
+  <el-drawer v-model="drawer">
+    <template #header>
+      <h4>分配權限</h4>
+    </template>
+    <template #default>
+      <el-tree
+        ref="treeRef"
+        :data="menuArr"
+        show-checkbox
+        default-expand-all
+        node-key="id"
+        highlight-current
+        :props="defaultProps"
+      />
+    </template>
+    <template #footer>
+      <div style="flex: auto">
+        <el-button @click="drawer = false">取消</el-button>
+        <el-button type="primary">確認</el-button>
+      </div>
+    </template>
+  </el-drawer>
 </template>
 
 <script lang="ts">
@@ -85,11 +110,17 @@ export default {
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, nextTick } from 'vue'
-import { reqAllRoleList, reqAddOrUpdateRole } from '@/api/acl/role'
+import {
+  reqAllRoleList,
+  reqAddOrUpdateRole,
+  reqAllMenuList,
+} from '@/api/acl/role'
 import type {
   RoleResponseData,
   Records,
   RoleData,
+  MenuResponseData,
+  MenuList,
 } from '@/api/acl/role/type.ts'
 import useLayoutSettingStore from '@/store/modules/setting.ts'
 import { ElMessage } from 'element-plus'
@@ -100,6 +131,7 @@ let total = ref<number>(10)
 let keyword = ref<string>('')
 let allRole = ref<Records>([])
 let dialogTableVisible = ref<boolean>(false)
+let drawer = ref<boolean>(false)
 
 let roleParams = reactive<RoleData>({
   roleName: '',
@@ -187,6 +219,22 @@ const save = async () => {
       message: roleParams.id ? '更新職位失敗' : '添加職位失敗',
     })
   }
+}
+
+let menuArr = ref<MenuList>([])
+const setPermission = async (row: RoleData) => {
+  drawer.value = true
+  //   收集數據
+  Object.assign(roleParams, row)
+  let res: MenuResponseData = await reqAllMenuList(roleParams.id!)
+  if (res.code === 200) {
+    menuArr.value = res.data
+  }
+}
+
+const defaultProps = {
+  children: 'children',
+  label: 'name',
 }
 </script>
 

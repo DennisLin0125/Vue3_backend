@@ -26,9 +26,17 @@
         >
           編輯
         </el-button>
-        <el-button type="primary" icon="Delete" :disabled="row.level == 1">
-          刪除
-        </el-button>
+        <el-popconfirm
+          width="260px"
+          :title="`確定要刪除 ${row.name} ?`"
+          @confirm="deletePermission(row.id)"
+        >
+          <template #reference>
+            <el-button type="primary" icon="Delete" :disabled="row.level == 1">
+              刪除
+            </el-button>
+          </template>
+        </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
@@ -62,7 +70,11 @@ export default {
 
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue'
-import { reqAllPermisstion, reqAddOrUpdateMenu } from '@/api/acl/menu'
+import {
+  reqAllPermisstion,
+  reqAddOrUpdateMenu,
+  reqRemoveMenu,
+} from '@/api/acl/menu'
 import type {
   PermisstionList,
   PermisstionResponseData,
@@ -125,6 +137,22 @@ const save = async () => {
     ElMessage({
       type: 'error',
       message: menuData.id ? '更新失敗' : '添加失敗',
+    })
+  }
+}
+
+const deletePermission = async (id: number) => {
+  const res: any = await reqRemoveMenu(id)
+  if (res.code === 200) {
+    await getHasPermission()
+    ElMessage({
+      type: 'success',
+      message: '刪除成功',
+    })
+  } else {
+    ElMessage({
+      type: 'success',
+      message: '刪除失敗',
     })
   }
 }

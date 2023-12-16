@@ -13,7 +13,7 @@
     </el-form>
   </el-card>
   <el-card style="margin: 10px 0">
-    <el-button type="primary" icon="Plus">添加角色</el-button>
+    <el-button type="primary" icon="Plus" @click="addRole">添加職位</el-button>
     <el-table border style="margin: 10px 0" :data="allRole">
       <el-table-column label="#" type="index" align="center" width="80" />
       <el-table-column prop="id" label="id" align="center" width="80" />
@@ -41,7 +41,9 @@
       <el-table-column label="操作" width="width" align="center">
         <template v-slot="{ row, $index }">
           <el-button type="primary" icon="User">分配權限</el-button>
-          <el-button type="info" icon="Edit">編輯</el-button>
+          <el-button type="info" icon="Edit" @click="updateRole(row)">
+            編輯
+          </el-button>
           <el-button type="danger" icon="Delete">刪除</el-button>
         </template>
       </el-table-column>
@@ -58,6 +60,18 @@
       @current-change="getHasRole"
     />
   </el-card>
+  <!--  添加職位-->
+  <el-dialog v-model="dialogTableVisible" title="添加職位">
+    <el-form>
+      <el-form-item label="職位名稱">
+        <el-input placeholder="請輸入職位名稱" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="dialogTableVisible = false">取消</el-button>
+      <el-button type="primary">確定</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -69,7 +83,11 @@ export default {
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { reqAllRoleList } from '@/api/acl/role'
-import type { RoleResponseData, Records } from '@/api/acl/role/type.ts'
+import type {
+  RoleResponseData,
+  Records,
+  RoleData,
+} from '@/api/acl/role/type.ts'
 import useLayoutSettingStore from '@/store/modules/setting.ts'
 
 let page = ref<number>(1)
@@ -77,6 +95,7 @@ let size = ref<number>(3)
 let total = ref<number>(10)
 let keyword = ref<string>('')
 let allRole = ref<Records>([])
+let dialogTableVisible = ref<boolean>(false)
 let layoutSettingStore = useLayoutSettingStore()
 
 onMounted(() => {
@@ -107,6 +126,14 @@ const search = () => {
 
 const reset = () => {
   layoutSettingStore.reflash = !layoutSettingStore.reflash
+}
+
+const addRole = () => {
+  dialogTableVisible.value = true
+}
+
+const updateRole = (row: RoleData) => {
+  dialogTableVisible.value = true
 }
 </script>
 

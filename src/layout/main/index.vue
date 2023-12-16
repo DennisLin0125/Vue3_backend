@@ -1,6 +1,6 @@
 <template>
   <router-view v-slot="{ Component }">
-    <transition name="fade-transform" mode="out-in">
+    <transition name="fade">
       <component :is="Component" v-if="flag"></component>
     </transition>
   </router-view>
@@ -33,18 +33,17 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.fade-transform-leave-active,
-.fade-transform-enter-active {
-  transition: all 0.5s;
+.fade-enter-from {
+  opacity: 0;
+  transform: scale(0);
 }
 
-.fade-transform-enter {
-  opacity: 0;
-  transform: translateX(-30px);
+.fade-enter-active {
+  transition: all 0.3s;
 }
 
-.fade-transform-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
+.fade-enter-to {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>

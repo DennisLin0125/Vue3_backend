@@ -84,19 +84,20 @@
     </template>
     <template #default>
       <el-tree
-        ref="treeRef"
+        ref="tree"
         :data="menuArr"
         show-checkbox
         default-expand-all
         node-key="id"
         highlight-current
         :props="defaultProps"
+        :default-checked-keys="selectArr"
       />
     </template>
     <template #footer>
       <div style="flex: auto">
         <el-button @click="drawer = false">取消</el-button>
-        <el-button type="primary">確認</el-button>
+        <el-button type="primary" @click="handler">確認</el-button>
       </div>
     </template>
   </el-drawer>
@@ -114,6 +115,7 @@ import {
   reqAllRoleList,
   reqAddOrUpdateRole,
   reqAllMenuList,
+  reqSetPermisstion,
 } from '@/api/acl/role'
 import type {
   RoleResponseData,
@@ -139,6 +141,7 @@ let roleParams = reactive<RoleData>({
 
 let layoutSettingStore = useLayoutSettingStore()
 let form = ref<any>()
+let tree = ref<any>()
 
 onMounted(() => {
   getHasRole()
@@ -222,6 +225,7 @@ const save = async () => {
 }
 
 let menuArr = ref<MenuList>([])
+let selectArr = ref<number[]>([])
 const setPermission = async (row: RoleData) => {
   drawer.value = true
   //   收集數據
@@ -229,12 +233,44 @@ const setPermission = async (row: RoleData) => {
   let res: MenuResponseData = await reqAllMenuList(roleParams.id!)
   if (res.code === 200) {
     menuArr.value = res.data
+    selectArr.value = filterSelectArr(menuArr.value, [])
   }
+}
+
+const filterSelectArr = (allData: any, initArr: any) => {
+  allData.forEach((item: any) => {
+    if (item.select && item.level === 4) {
+      initArr.push(item.id)
+    }
+    if (item.children && item.children.length > 0) {
+      filterSelectArr(item.children, initArr)
+    }
+  })
+  return initArr
 }
 
 const defaultProps = {
   children: 'children',
   label: 'name',
+}
+
+const handler = async () => {
+  const roleId = roleParams.id
+
+  const checkArr = tree.value.getHalfCheckedKeys()
+  const checkArr1 = tree.value.getCheckedKeys()
+
+  const permissionId = checkArr.concat(checkArr1)
+
+  let res: any = await reqSetPermisstion(roleId!, permissionId)
+  if (res.code === 200) {
+    drawer.value = false
+    ElMessage({ type: 'success', message: '新增職位成功' })
+    window.location.reload()
+  } else {
+    drawer.value = false
+    ElMessage({ type: 'error', message: '新增職位失敗' })
+  }
 }
 </script>
 

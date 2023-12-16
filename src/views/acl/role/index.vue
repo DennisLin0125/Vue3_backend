@@ -46,7 +46,15 @@
           <el-button type="info" icon="Edit" @click="updateRole(row)">
             編輯
           </el-button>
-          <el-button type="danger" icon="Delete">刪除</el-button>
+          <el-popconfirm
+            :title="`確定要刪除 ${row.roleName} ?`"
+            @confirm="deleteRole(row)"
+            width="260px"
+          >
+            <template #reference>
+              <el-button type="danger" icon="Delete">刪除</el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -116,6 +124,7 @@ import {
   reqAddOrUpdateRole,
   reqAllMenuList,
   reqSetPermisstion,
+  reqRemoveRole,
 } from '@/api/acl/role'
 import type {
   RoleResponseData,
@@ -270,6 +279,16 @@ const handler = async () => {
   } else {
     drawer.value = false
     ElMessage({ type: 'error', message: '新增職位失敗' })
+  }
+}
+
+const deleteRole = async (row: RoleData) => {
+  let res = await reqRemoveRole(row.id!)
+  if (res.code === 200) {
+    await getHasRole(allRole.value.length > 1 ? page.value : page.value - 1)
+    ElMessage({ type: 'success', message: '刪除成功' })
+  } else {
+    ElMessage({ type: 'error', message: '刪除失敗' })
   }
 }
 </script>

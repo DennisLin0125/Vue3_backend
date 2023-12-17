@@ -20,6 +20,7 @@
           v-model="color"
           show-alpha
           :predefine="predefineColors"
+          @change="setColor"
         />
       </el-form-item>
       <el-form-item label="暗黑模式">
@@ -127,6 +128,11 @@ const predefineColors = ref([
 const changeDark = () => {
   let html = document.documentElement
   dark.value ? (html.className = 'dark') : (html.className = '')
+}
+
+const setColor = () => {
+  let html = document.documentElement
+  html.style.setProperty('--el-color-primary', color.value)
 }
 </script>
 

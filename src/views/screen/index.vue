@@ -86,12 +86,10 @@ function getScale(w = 1920, h = 1080) {
 
         .sex {
           flex: 1;
-          background: orange;
         }
 
         .age {
           flex: 1;
-          background: honeydew;
         }
       }
 

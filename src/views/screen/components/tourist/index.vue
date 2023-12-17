@@ -38,7 +38,7 @@ onMounted(() => {
     xAxis: {},
     yAxis: {},
     series: {
-      type: 'liquidFill', 
+      type: 'liquidFill',
       data: [0.6, 0.4, 0.2],
       waveAnimation: true,
       animationDuration: 3,

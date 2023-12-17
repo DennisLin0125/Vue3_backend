@@ -14,7 +14,11 @@
           <Map class="map" />
           <Line class="line" />
         </div>
-        <div class="right">右側</div>
+        <div class="right">
+          <Rank class="rank" />
+          <Year class="year" />
+          <Counter class="counter" />
+        </div>
       </div>
     </div>
   </div>
@@ -29,11 +33,17 @@ export default {
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import Top from './components/top/index.vue'
+
 import Tourist from '@/views/screen/components/tourist/index.vue'
 import Sex from '@/views/screen/components/sex/index.vue'
 import Age from '@/views/screen/components/age/index.vue'
+
 import Map from '@/views/screen/components/map/index.vue'
 import Line from '@/views/screen/components/line/index.vue'
+
+import Counter from '@/views/screen/components/counter/index.vue'
+import Year from '@/views/screen/components/year/index.vue'
+import Rank from '@/views/screen/components/rank/index.vue'
 
 let screen = ref()
 
@@ -76,7 +86,22 @@ function getScale(w = 1920, h = 1080) {
       display: flex;
 
       .right {
+        display: flex;
         flex: 1;
+        flex-direction: column;
+        margin-left: 40px;
+
+        .rank {
+          flex: 1.5;
+        }
+
+        .year {
+          flex: 1;
+        }
+
+        .counter {
+          flex: 1;
+        }
       }
 
       .left {
@@ -100,7 +125,7 @@ function getScale(w = 1920, h = 1080) {
 
       .center {
         display: flex;
-        flex: 2;
+        flex: 1.5;
         flex-direction: column;
 
         .map {

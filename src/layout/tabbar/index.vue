@@ -26,12 +26,12 @@ import Setting from '@/layout/tabbar/setting/index.vue'
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(
-    to right,
-    rgb(232 223 223),
-    rgb(201 178 178),
-    rgb(232 223 223)
-  );
+  //background-image: linear-gradient(
+  //  to right,
+  //  rgb(232 223 223),
+  //  rgb(201 178 178),
+  //  rgb(232 223 223)
+  //);
 
   .tabbar-left {
     display: flex;

@@ -9,8 +9,10 @@ import globalComponent from '@/components'
 import router from '@/router'
 import pinia from '@/store'
 import '@/permission.ts'
+import { isHasButton } from '@/directive/has.ts'
 
 const app = createApp(App)
+isHasButton(app)
 app.use(ElementPlus)
 app.use(globalComponent)
 app.use(router)

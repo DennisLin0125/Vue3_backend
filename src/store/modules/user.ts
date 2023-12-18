@@ -9,16 +9,32 @@ import type {
 import type { userState } from '@/store/modules/types/type.ts'
 // 引入本地存儲
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils/token.ts'
-// 引入路由常量
-import { constantRouter } from '@/router/routes.ts'
+// 引入路由
+import { constantRoute, asyncRoute, anyRoute } from '@/router/routes.ts'
+
+import router from '@/router'
+// 引入深拷貝
+// @ts-ignore
+import cloneDeep from 'lodash/cloneDeep'
+function filterAsyncRoute(asyncRoute: any, routes: any) {
+  return asyncRoute.filter((item: any) => {
+    if (routes.includes(item.name)) {
+      if (item.children && item.children.length > 0) {
+        item.children = filterAsyncRoute(item.children, routes)
+      }
+      return true
+    }
+  })
+}
 // 創建小倉庫
 const useUserStore = defineStore('User', {
   state: (): userState => {
     return {
       token: GET_TOKEN(),
-      menuRoutes: constantRouter,
+      menuRoutes: constantRoute,
       username: '',
       avatar: '',
+      buttons: [],
     }
   },
   actions: {
@@ -39,6 +55,20 @@ const useUserStore = defineStore('User', {
       if (result.code === 200) {
         this.username = result.data.name
         this.avatar = result.data.avatar
+        this.buttons = result.data.buttons
+
+        let userAsyncRoute = filterAsyncRoute(
+          cloneDeep(asyncRoute),
+          result.data.routes,
+        )
+
+        this.menuRoutes = [...constantRoute, ...userAsyncRoute, anyRoute]
+
+        let arr: any = [...userAsyncRoute, anyRoute]
+
+        // 追加路由
+        arr.forEach((route: any) => router.addRoute(route))
+
         return 'ok'
       } else {
         return Promise.reject(new Error(result.message))

@@ -1,4 +1,5 @@
-export const constantRouter = [
+// 常輛路由: 任何人都可以訪問
+export const constantRoute = [
   {
     name: 'Login',
     path: '/login',
@@ -48,10 +49,14 @@ export const constantRouter = [
       icon: 'Platform',
     },
   },
+]
+
+// 異步路由: 有些人可以,有些人不能訪問
+export const asyncRoute = [
   {
     path: '/acl',
-    name: 'Acl',
     component: () => import('@/layout/index.vue'),
+    name: 'Acl',
     meta: {
       title: '權限管理',
       icon: 'Lock',
@@ -61,8 +66,8 @@ export const constantRouter = [
       {
         path: '/acl/user',
         component: () => import('@/views/acl/user/index.vue'),
+        name: 'User',
         meta: {
-          name: 'Acl',
           title: '用戶管理',
           icon: 'User',
         },
@@ -70,8 +75,8 @@ export const constantRouter = [
       {
         path: '/acl/role',
         component: () => import('@/views/acl/role/index.vue'),
+        name: 'Role',
         meta: {
-          name: 'Role',
           title: '角色管理',
           icon: 'UserFilled',
         },
@@ -79,18 +84,18 @@ export const constantRouter = [
       {
         path: '/acl/permission',
         component: () => import('@/views/acl/permission/index.vue'),
+        name: 'Permission',
         meta: {
-          name: 'Permission',
           title: '菜單管理',
-          icon: 'Grid',
+          icon: 'Monitor',
         },
       },
     ],
   },
   {
     path: '/product',
-    name: 'Product',
     component: () => import('@/layout/index.vue'),
+    name: 'Product',
     meta: {
       title: '商品管理',
       icon: 'Goods',
@@ -111,8 +116,8 @@ export const constantRouter = [
         component: () => import('@/views/product/attr/index.vue'),
         name: 'Attr',
         meta: {
-          title: '平台屬性管理',
-          icon: 'Sunny',
+          title: '属性管理',
+          icon: 'ChromeFilled',
         },
       },
       {
@@ -130,19 +135,21 @@ export const constantRouter = [
         name: 'Sku',
         meta: {
           title: 'SKU管理',
-          icon: 'Apple',
+          icon: 'Orange',
         },
       },
     ],
   },
-  {
-    name: 'Any',
-    path: '/:pathMatch(.*)*',
-    redirect: '/404',
-    meta: {
-      title: '任意路由',
-      hidden: true,
-      icon: 'Refresh',
-    },
-  },
 ]
+
+//任意路由:
+export const anyRoute = {
+  name: 'Any',
+  path: '/:pathMatch(.*)*',
+  redirect: '/404',
+  meta: {
+    title: '任意路由',
+    hidden: true,
+    icon: 'Refresh',
+  },
+}

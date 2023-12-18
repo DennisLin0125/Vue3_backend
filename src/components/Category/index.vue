@@ -55,7 +55,7 @@ export default {
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import useCategoryStore from '@/store/modules/category.ts'
+import useCategoryStore from '@/store/modules/category'
 defineProps(['scene'])
 
 let categoryStore = useCategoryStore()

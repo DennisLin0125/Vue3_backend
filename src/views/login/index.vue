@@ -87,7 +87,7 @@ const login = async () => {
     loading.value = false
     ElNotification({
       type: 'error',
-      message: err.message as Error,
+      message: (err.message as string) || 'An error occurred',
     })
   }
 }

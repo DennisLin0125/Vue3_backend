@@ -25,7 +25,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import moment from 'moment'
 // 儲存當前時間
 let time = ref(moment().format('YYYY年MM月DD日 hh:mm:ss'))
-let timeId = ref(null)
+let timeId = ref(0)
 let $router = useRouter()
 
 onMounted(() => {

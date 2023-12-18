@@ -34,19 +34,19 @@ export default {
 </script>
 
 <script setup lang="ts">
+// 獲取路由對象
+import { useRoute } from 'vue-router'
+import useLayoutSettingStore from '@/store/modules/setting.ts'
 import Logo from '@/layout/logo/index.vue'
 import Menu from '@/layout/menu/index.vue'
 import Main from '@/layout/main/index.vue'
 import Tabbar from '@/layout/tabbar/index.vue'
 
-import useUserStore from '@/store/modules/user.ts'
+import useUserStore from '@/store/modules/user'
 let userStore = useUserStore()
 
-import useLayoutSettingStore from '@/store/modules/setting.ts'
 let layoutSettingStore = useLayoutSettingStore()
 
-// 獲取路由對象
-import { useRoute } from 'vue-router'
 let $route = useRoute()
 </script>
 

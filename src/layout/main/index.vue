@@ -14,7 +14,7 @@ export default {
 
 <script setup lang="ts">
 import { watch, ref, nextTick } from 'vue'
-import useLayoutSettingStore from '@/store/modules/setting.ts'
+import useLayoutSettingStore from '@/store/modules/setting'
 let layoutSettingStore = useLayoutSettingStore()
 
 // 控制當前組件是否銷毀

@@ -68,14 +68,14 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { useRouter, useRoute } from 'vue-router'
+import useUserStore from '@/store/modules/user.ts'
 import { ref } from 'vue'
-import useLayoutSettingStore from '@/store/modules/setting.ts'
+import useLayoutSettingStore from '@/store/modules/setting'
 let layoutSettingStore = useLayoutSettingStore()
 
-import useUserStore from '@/store/modules/user.ts'
 let userStore = useUserStore()
 
-import { useRouter, useRoute } from 'vue-router'
 let $router = useRouter()
 let $route = useRoute()
 

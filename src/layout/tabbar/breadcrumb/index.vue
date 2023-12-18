@@ -29,9 +29,9 @@ export default {
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import useLayoutSettingStore from '@/store/modules/setting.ts'
 let $route = useRoute()
 
-import useLayoutSettingStore from '@/store/modules/setting.ts'
 let layoutSettingStore = useLayoutSettingStore()
 const changeIcon = () => {
   layoutSettingStore.fold = !layoutSettingStore.fold

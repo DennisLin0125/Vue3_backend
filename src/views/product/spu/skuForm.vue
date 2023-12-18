@@ -142,7 +142,13 @@ const initSkuData = async (
 ) => {
   //收集數據
   skuParams.category3Id = spu.category3Id
-  skuParams.spuId = spu.id
+  if (spu.id !== undefined) {
+    skuParams.spuId = spu.id
+  } else {
+    // 如果 spu.id 是 undefined，你可能需要做一些處理，這取決於你的業務邏輯
+    // 這裡只是一個示例，你可以根據實際情況進行調整
+    console.error('Error: spu.id is undefined')
+  }
   skuParams.tmId = spu.tmId
 
   let result: any = await reqAttr(c1Id, c2Id, spu.category3Id)

@@ -13,7 +13,7 @@ export default {
 
 <script setup lang="ts">
 //引入設置標題的文件
-import setting from '@/setting.ts'
+import setting from '@/setting'
 </script>
 
 <style scoped lang="scss">
